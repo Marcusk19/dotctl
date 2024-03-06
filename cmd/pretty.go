@@ -11,12 +11,15 @@ import (
 )
 
 func init() {
-  rootCmd.AddCommand(prettyCmd)
+  RootCmd.AddCommand(prettyCmd)
 }
 
 var prettyCmd = &cobra.Command {
   Use: "pretty",
   Run: func(cmd *cobra.Command, args []string) {
+    if (len(args) <= 0) {
+      log.Fatal("no arguments provided")
+    }
     var filename = args[0]
     f, err := os.Open(filename)
     if err != nil {
@@ -31,7 +34,7 @@ var prettyCmd = &cobra.Command {
       line := scanner.Text()
       formattedLine := strings.Replace(line, "\\n", "\n", -1)
       formattedLine = strings.Replace(formattedLine, "\\t", "\t", -1)
-      fmt.Printf(formattedLine)
+      fmt.Fprintf(cmd.OutOrStdout(), formattedLine)
     }
 
     if err := scanner.Err(); err != nil {
