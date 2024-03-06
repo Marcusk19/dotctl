@@ -1,7 +1,7 @@
 # Bender
 ![](assets/bender.png)
 
-A cli tool for managing text
+A general purpose CLI tool.
 
 ## Installation
 - TBD
