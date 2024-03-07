@@ -16,11 +16,15 @@ func init() {
 var initCommand = &cobra.Command {
   Use: "init",
   Run: func(cmd *cobra.Command, args []string) {
-    if(len(args) <= 0) {
-      log.Fatal(cmd.OutOrStdout(), "no arguments provided to init")
+    var rootpath string
+    if len(args) <= 0 {
+      fmt.Fprintf(cmd.OutOrStdout(), "no path provided, assuming /usr/bin/\n")
+      rootpath = "/usr/bin/"
+    } else {
+      rootpath = args[0]
     }
 
-    if args[0][len(args[0])-1:] != "/" {
+    if rootpath[len(rootpath)-1:] != "/" {
       log.Fatal("path needs trailing slash")
     }
 
@@ -30,7 +34,6 @@ var initCommand = &cobra.Command {
     acceptedfiles[1] = "tmux"
     acceptedfiles[2] = "alacritty"
 
-    rootpath := args[0]
     err := filepath.Walk(rootpath, func(path string, info os.FileInfo, err error) error {
       if err != nil {
         log.Fatalf("problem walking path %s", err)
@@ -38,7 +41,7 @@ var initCommand = &cobra.Command {
       }
 
       for _, acceptedfile := range(acceptedfiles) {
-        if path == args[0] + acceptedfile {
+        if path == rootpath + acceptedfile {
           files = append(files, path)
         }
       }
@@ -51,7 +54,7 @@ var initCommand = &cobra.Command {
 
     fmt.Fprintf(cmd.OutOrStdout(), "binaries installed: \n =======================\n")
     for _, file := range(files) {
-      fmt.Fprintf(cmd.OutOrStdout(), file[len(args[0]):] + "\n" )
+      fmt.Fprintf(cmd.OutOrStdout(), file[len(rootpath):] + "\n" )
     }
     
   },
