@@ -13,6 +13,26 @@ func init() {
   RootCmd.AddCommand(initCommand)
 }
 
+func backupExistingConfigs(programs []string) {
+  // takes list of programs and backs up configs for them
+  configRoot := os.Getenv("HOME") + "/.config/"
+  for _, program := range(programs) {
+    // TODO: do something here
+    print(configRoot + program)
+  }
+}
+
+func createDotfileStructure(programs []string) {
+  // takes list of programs and creates dotfiles for them
+  dotfileRoot := os.Getenv("HOME") + "/.dotfiles/"
+  for _, program := range(programs) {
+    fmt.Printf("attempting to create directory %s%s\n", dotfileRoot, program)
+    if err := os.MkdirAll(dotfileRoot + program, os.ModePerm); err != nil {
+      log.Fatal(err)
+    }
+  }
+}
+
 var initCommand = &cobra.Command {
   Use: "init",
   Run: func(cmd *cobra.Command, args []string) {
@@ -42,7 +62,7 @@ var initCommand = &cobra.Command {
 
       for _, acceptedfile := range(acceptedfiles) {
         if path == rootpath + acceptedfile {
-          files = append(files, path)
+          files = append(files, path[len(rootpath):])
         }
       }
       return nil
@@ -54,8 +74,10 @@ var initCommand = &cobra.Command {
 
     fmt.Fprintf(cmd.OutOrStdout(), "binaries installed: \n =======================\n")
     for _, file := range(files) {
-      fmt.Fprintf(cmd.OutOrStdout(), file[len(rootpath):] + "\n" )
+      fmt.Fprintf(cmd.OutOrStdout(), file + "\n" )
     }
+
+    createDotfileStructure(files)
     
   },
 }
