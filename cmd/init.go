@@ -7,18 +7,25 @@ import (
 	"path/filepath"
 
 	"github.com/spf13/cobra"
+  "github.com/Marcusk19/bender/tools"
 )
 
 func init() {
   RootCmd.AddCommand(initCommand)
 }
 
-func backupExistingConfigs(programs []string) {
+func copyExistingConfigs(programs []string, destRootOpt ...string) {
   // takes list of programs and backs up configs for them
+  destRoot := os.Getenv("HOME") + "/.dotfiles/"
+  if len(destRootOpt) > 0 {
+    destRoot = destRootOpt[0]
+  }
+
   configRoot := os.Getenv("HOME") + "/.config/"
   for _, program := range(programs) {
     // TODO: do something here
     print(configRoot + program)
+    tools.CopyDir(filepath.Join(configRoot, program), filepath.Join(destRoot, program))
   }
 }
 
