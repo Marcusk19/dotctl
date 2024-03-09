@@ -2,7 +2,6 @@ name: CI
 on:
   pull_request:
     branches:
-      - main
 
 jobs:
   ci:
@@ -14,6 +13,6 @@ jobs:
         with:
           go-version: '1.22.x'
       - name: Install dependencies
-        run: go get.
+        run: go get .
       - name: Test with Go CLI
-        run: go test ./test
+        run: go test -v ./test
