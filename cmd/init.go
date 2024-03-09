@@ -10,6 +10,8 @@ import (
   "github.com/Marcusk19/bender/tools"
 )
 
+var fs = tools.AppFs
+
 func init() {
   RootCmd.AddCommand(initCommand)
 }
@@ -25,7 +27,7 @@ func copyExistingConfigs(programs []string, destRootOpt ...string) {
   for _, program := range(programs) {
     // TODO: do something here
     print(configRoot + program)
-    err := tools.CopyDir(filepath.Join(configRoot, program), filepath.Join(destRoot, program))
+    err := tools.CopyDir(fs, filepath.Join(configRoot, program), filepath.Join(destRoot, program))
     if err != nil {
       log.Fatal(err)
     }
@@ -37,7 +39,7 @@ func createDotfileStructure(programs []string) {
   dotfileRoot := os.Getenv("HOME") + "/.dotfiles/"
   for _, program := range(programs) {
     fmt.Printf("attempting to create directory %s%s\n", dotfileRoot, program)
-    if err := os.MkdirAll(dotfileRoot + program, os.ModePerm); err != nil {
+    if err := fs.MkdirAll(dotfileRoot + program, os.ModePerm); err != nil {
       log.Fatal(err)
     }
   }

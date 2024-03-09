@@ -3,14 +3,13 @@ package tools
 import (
 	"fmt"
 	"io"
-	"os"
-  "log"
 	"path/filepath"
+
+	"github.com/spf13/afero"
 )
 
-func CopyFile(srcFile, destFile string) error{
+func CopyFile(os afero.Fs, srcFile, destFile string) error{
   // helper function to copy files over
-  log.Printf("copy of %s to %s\n", srcFile, destFile)
   sourceFileStat, err := os.Stat(srcFile)
   if err != nil {
     return err
@@ -37,27 +36,27 @@ func CopyFile(srcFile, destFile string) error{
   return err
 }
 
-func CopyDir(srcDir, destDir string) error {
-  log.Printf("copying from %s to %s\n", srcDir, destDir)
-  entries, err := os.ReadDir(srcDir)
+func CopyDir(os afero.Fs, srcDir, destDir string) error {
+  entries, err := afero.ReadDir(os, srcDir)
   if err != nil {
     return err
   }
-  log.Printf("entries found: %s\n", entries)
 
   for _, entry := range(entries) {
-    if entry.Type().IsDir() {
-      err := os.MkdirAll(filepath.Join(destDir, entry.Name()), os.ModePerm)
+    if entry.IsDir() {
+      subDir := filepath.Join(srcDir, entry.Name())
+      destSubDir := filepath.Join(destDir, entry.Name())
+      err := os.MkdirAll(destSubDir, entry.Mode().Perm())
       if err != nil {
         return err
       }
-      CopyDir(filepath.Join(srcDir, entry.Name()), filepath.Join(destDir, entry.Name()))
+      CopyDir(os, subDir, destSubDir)
       continue
     }
     sourcePath := filepath.Join(srcDir, entry.Name())
     destPath := filepath.Join(destDir, entry.Name())
 
-    err := CopyFile(sourcePath, destPath)
+    err := CopyFile(os, sourcePath, destPath)
     if err != nil {
       return err
     }
