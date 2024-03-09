@@ -25,7 +25,10 @@ func copyExistingConfigs(programs []string, destRootOpt ...string) {
   for _, program := range(programs) {
     // TODO: do something here
     print(configRoot + program)
-    tools.CopyDir(filepath.Join(configRoot, program), filepath.Join(destRoot, program))
+    err := tools.CopyDir(filepath.Join(configRoot, program), filepath.Join(destRoot, program))
+    if err != nil {
+      log.Fatal(err)
+    }
   }
 }
 
@@ -55,11 +58,11 @@ var initCommand = &cobra.Command {
       log.Fatal("path needs trailing slash")
     }
 
-    var files []string
-    var acceptedfiles [3] string 
-    acceptedfiles[0] = "nvim"
-    acceptedfiles[1] = "tmux"
-    acceptedfiles[2] = "alacritty"
+    var programs []string
+    var acceptedprograms [3] string 
+    acceptedprograms[0] = "nvim"
+    acceptedprograms[1] = "tmux"
+    acceptedprograms[2] = "alacritty"
 
     err := filepath.Walk(rootpath, func(path string, info os.FileInfo, err error) error {
       if err != nil {
@@ -67,9 +70,9 @@ var initCommand = &cobra.Command {
         return nil
       }
 
-      for _, acceptedfile := range(acceptedfiles) {
-        if path == rootpath + acceptedfile {
-          files = append(files, path[len(rootpath):])
+      for _, acceptedprogram := range(acceptedprograms) {
+        if path == rootpath + acceptedprogram {
+          programs = append(programs, path[len(rootpath):])
         }
       }
       return nil
@@ -80,11 +83,12 @@ var initCommand = &cobra.Command {
     }
 
     fmt.Fprintf(cmd.OutOrStdout(), "binaries installed: \n =======================\n")
-    for _, file := range(files) {
-      fmt.Fprintf(cmd.OutOrStdout(), file + "\n" )
+    for _, program := range(programs) {
+      fmt.Fprintf(cmd.OutOrStdout(), program + "\n" )
     }
 
-    createDotfileStructure(files)
+    createDotfileStructure(programs)
+    copyExistingConfigs(programs)
     
   },
 }
