@@ -60,6 +60,7 @@ var initCommand = &cobra.Command {
       log.Fatal("path needs trailing slash")
     }
 
+    // TODO make a configurable list of binaries we want to look for
     var programs []string
     var acceptedprograms [3] string 
     acceptedprograms[0] = "nvim"

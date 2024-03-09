@@ -4,12 +4,18 @@ import (
 	"fmt"
 	"io"
 	"path/filepath"
+	"strings"
 
 	"github.com/spf13/afero"
 )
 
 func CopyFile(os afero.Fs, srcFile, destFile string) error{
   // helper function to copy files over
+  // ignore pre-existing git files
+  if strings.Contains(srcFile, ".git") {
+    return nil
+  }
+
   sourceFileStat, err := os.Stat(srcFile)
   if err != nil {
     return err
@@ -18,6 +24,7 @@ func CopyFile(os afero.Fs, srcFile, destFile string) error{
   if !sourceFileStat.Mode().IsRegular() {
     return fmt.Errorf("%s is not a regular file", srcFile)
   }
+
 
   source, err := os.Open(srcFile)
   if err != nil {
@@ -44,6 +51,9 @@ func CopyDir(os afero.Fs, srcDir, destDir string) error {
 
   for _, entry := range(entries) {
     if entry.IsDir() {
+      if entry.Name() == ".git" {
+        continue
+      }
       subDir := filepath.Join(srcDir, entry.Name())
       destSubDir := filepath.Join(destDir, entry.Name())
       err := os.MkdirAll(destSubDir, entry.Mode().Perm())
