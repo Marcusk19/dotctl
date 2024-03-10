@@ -6,8 +6,9 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/Marcusk19/bender/tools"
+	"github.com/go-git/go-git/v5"
 	"github.com/spf13/cobra"
-  "github.com/Marcusk19/bender/tools"
 )
 
 var fs = tools.AppFs
@@ -92,6 +93,11 @@ var initCommand = &cobra.Command {
 
     createDotfileStructure(programs)
     copyExistingConfigs(programs)
-    
+
+    _, err = git.PlainInit(filepath.Join(os.Getenv("HOME"), "/.dotfiles"), false)
+    if err != nil {
+      log.Fatal(err)
+    }
+    fmt.Fprintf(cmd.OutOrStdout(), "Successfully created dotfiles repository\n")
   },
 }
