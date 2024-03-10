@@ -24,7 +24,7 @@ func copyExistingConfigs(programs []string, destRootOpt ...string) {
     destRoot = destRootOpt[0]
   }
 
-  configRoot := os.Getenv("HOME") + "/.config/"
+  configRoot := ConfigPath
   for _, program := range(programs) {
     // TODO: do something here
     print(configRoot + program)
@@ -48,6 +48,8 @@ func createDotfileStructure(programs []string) {
 
 var initCommand = &cobra.Command {
   Use: "init",
+  Short: "Copy configs to dotfile directory",
+  Long: "Searches existing config directory for configs and then copies them to dotfile directory",
   Run: func(cmd *cobra.Command, args []string) {
     var rootpath string
     if len(args) <= 0 {

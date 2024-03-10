@@ -10,22 +10,17 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 func init() {
   RootCmd.AddCommand(backupCommand)
-  RootCmd.PersistentFlags().StringVar(&DotfilePath, "dotfile-path", "~/.dotfiles", "Path pointing to dotfiles directory")
-  RootCmd.MarkFlagRequired("dotfile-path")
-  viper.BindPFlag("dotfile-path", RootCmd.PersistentFlags().Lookup("dotfile-path"))
 }
 
 var backupCommand = &cobra.Command {
   Use: "backup",
+  Short: "Add and commit files in dotfiles directory",
   Run: runBackup,
 }
-
-var DotfilePath string
 
 func gitAddFiles(worktree *git.Worktree, fs afero.Fs) error {
   entries, err := afero.ReadDir(fs, DotfilePath)
