@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
+Copyright © 2024 Marcus Kok
 
 */
 package cmd
@@ -8,23 +8,16 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 
-
-// RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
 	Use:   "bender",
-	Short: "Change literals to whitespace",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Short: "dotfile management",
+	Long: `Bender is a CLI tool for syncing your
+  dotfiles. It provides an opiniated way to symlink
+  a dotfile directory to various config directories.`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -36,6 +29,9 @@ func Execute() {
 	}
 }
 
+var DotfilePath string
+var ConfigPath string
+
 func init() {
   // define flags and config sections
 
@@ -43,6 +39,21 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
+  defaultDotPath := os.Getenv("HOME") + "/.dotfiles/"
+  defaultConfPath := os.Getenv("HOME") + "/.config/"
+  RootCmd.PersistentFlags().StringVar(
+    &DotfilePath,
+    "dotfile-path",
+    defaultDotPath,
+    "Path pointing to dotfiles directory",
+  )
+  RootCmd.PersistentFlags().StringVar(
+    &ConfigPath,
+    "config-path",
+    defaultConfPath,
+    "Path pointing to config directory",
+  )
+  viper.BindPFlag("dotfile-path", RootCmd.PersistentFlags().Lookup("dotfile-path"))
 	RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
