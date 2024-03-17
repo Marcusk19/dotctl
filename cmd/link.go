@@ -19,6 +19,7 @@ var linkCommand = &cobra.Command {
 }
 
 func runLinkCommand(cmd *cobra.Command, args []string) {
+  fs := UseFilesystem()
   fmt.Println("Symlinking dotfiles...")
   entries, err := afero.ReadDir(fs, DotfilePath)
   if err != nil {
