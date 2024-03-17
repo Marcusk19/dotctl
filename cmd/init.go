@@ -8,18 +8,19 @@ import (
 
 	"github.com/Marcusk19/bender/tools"
 	"github.com/go-git/go-git/v5"
+	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-var fs = tools.AppFs
 
 func init() {
   RootCmd.AddCommand(initCommand)
 }
 
-func copyExistingConfigs(programs []string, destRootOpt ...string) {
+func copyExistingConfigs(programs []string, fs afero.Fs, destRootOpt ...string) {
   // takes list of programs and backs up configs for them
-  destRoot := os.Getenv("HOME") + "/.dotfiles/"
+  destRoot := DotfilePath
   if len(destRootOpt) > 0 {
     destRoot = destRootOpt[0]
   }
@@ -27,19 +28,18 @@ func copyExistingConfigs(programs []string, destRootOpt ...string) {
   configRoot := ConfigPath
   for _, program := range(programs) {
     // TODO: do something here
-    print(configRoot + program)
     err := tools.CopyDir(fs, filepath.Join(configRoot, program), filepath.Join(destRoot, program))
     if err != nil {
-      log.Fatal(err)
+      log.Fatalf("Problem copying %s", err.Error())
     }
   }
 }
 
-func createDotfileStructure(programs []string) {
+func createDotfileStructure(programs []string, fs afero.Fs) {
   // takes list of programs and creates dotfiles for them
-  dotfileRoot := os.Getenv("HOME") + "/.dotfiles/"
+  dotfileRoot := DotfilePath
+  fmt.Printf("creating dotfile directory structure at %s\n", dotfileRoot)
   for _, program := range(programs) {
-    fmt.Printf("attempting to create directory %s%s\n", dotfileRoot, program)
     if err := fs.MkdirAll(dotfileRoot + program, os.ModePerm); err != nil {
       log.Fatal(err)
     }
@@ -51,6 +51,13 @@ var initCommand = &cobra.Command {
   Short: "Copy configs to dotfile directory",
   Long: "Searches existing config directory for configs and then copies them to dotfile directory",
   Run: func(cmd *cobra.Command, args []string) {
+
+    fs := FileSystem
+
+    if(viper.Get("testing") == true && fs.Name() != "MemMapFS") {
+      log.Fatalf("wrong filesystem, got %s", fs.Name())
+    }
+
     var rootpath string
     if len(args) <= 0 {
       fmt.Fprintf(cmd.OutOrStdout(), "no path provided, assuming /usr/bin/\n")
@@ -60,7 +67,7 @@ var initCommand = &cobra.Command {
     }
 
     if rootpath[len(rootpath)-1:] != "/" {
-      log.Fatal("path needs trailing slash")
+      log.Fatal("path needs trailing slash\n")
     }
 
     // TODO make a configurable list of binaries we want to look for
@@ -69,10 +76,10 @@ var initCommand = &cobra.Command {
     acceptedprograms[0] = "nvim"
     acceptedprograms[1] = "tmux"
     acceptedprograms[2] = "alacritty"
-
-    err := filepath.Walk(rootpath, func(path string, info os.FileInfo, err error) error {
+    
+    err := afero.Walk(fs, rootpath, func(path string, info os.FileInfo, err error) error {
       if err != nil {
-        log.Fatalf("problem walking path %s", err)
+        log.Fatalf("problem walking path %s\n", err)
         return nil
       }
 
@@ -88,17 +95,19 @@ var initCommand = &cobra.Command {
       log.Fatal(err)
     }
 
-    fmt.Fprintf(cmd.OutOrStdout(), "binaries installed: \n =======================\n")
+    fmt.Fprintf(cmd.OutOrStdout(), "binaries found: \n =======================\n")
     for _, program := range(programs) {
       fmt.Fprintf(cmd.OutOrStdout(), program + "\n" )
     }
 
-    createDotfileStructure(programs)
-    copyExistingConfigs(programs)
+    createDotfileStructure(programs, fs)
+    copyExistingConfigs(programs, fs)
 
-    _, err = git.PlainInit(filepath.Join(os.Getenv("HOME"), "/.dotfiles"), false)
-    if err != nil {
-      log.Fatal(err)
+    if (viper.Get("testing") != true){
+      _, err = git.PlainInit(DotfilePath, false)
+      if err != nil {
+        log.Fatal(err)
+      }
     }
     fmt.Fprintf(cmd.OutOrStdout(), "Successfully created dotfiles repository\n")
   },
