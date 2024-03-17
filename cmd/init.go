@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path"
 	"path/filepath"
 
 	"github.com/Marcusk19/bender/tools"
@@ -18,12 +19,9 @@ func init() {
   RootCmd.AddCommand(initCommand)
 }
 
-func copyExistingConfigs(programs []string, fs afero.Fs, destRootOpt ...string) {
+func copyExistingConfigs(programs []string, fs afero.Fs) {
   // takes list of programs and backs up configs for them
   destRoot := DotfilePath
-  if len(destRootOpt) > 0 {
-    destRoot = destRootOpt[0]
-  }
 
   configRoot := ConfigPath
   for _, program := range(programs) {
@@ -40,7 +38,7 @@ func createDotfileStructure(programs []string, fs afero.Fs) {
   dotfileRoot := DotfilePath
   fmt.Printf("creating dotfile directory structure at %s\n", dotfileRoot)
   for _, program := range(programs) {
-    if err := fs.MkdirAll(dotfileRoot + program, os.ModePerm); err != nil {
+    if err := fs.MkdirAll(path.Join(dotfileRoot, program), os.ModePerm); err != nil {
       log.Fatal(err)
     }
   }
