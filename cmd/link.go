@@ -9,13 +9,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func init() {
-  RootCmd.AddCommand(linkCommand)
-}
-
 var linkCommand = &cobra.Command {
   Use: "link",
   Run: runLinkCommand,
+}
+
+var DryRun bool
+
+func init() {
+  RootCmd.AddCommand(linkCommand)
+  linkCommand.Flags().BoolVarP(&DryRun, "dry-run", "d", false, "Only output which symlinks will be created")
 }
 
 func runLinkCommand(cmd *cobra.Command, args []string) {
@@ -33,9 +36,18 @@ func runLinkCommand(cmd *cobra.Command, args []string) {
     configPath := filepath.Join(ConfigPath, entry.Name())
 
     // destination needs to be removed before symlink
-    fs.RemoveAll(configPath)
+    if(DryRun) {
+      log.Printf("Existing directory %s will be removed\n", configPath)
 
-    err = afero.OsFs.SymlinkIfPossible(afero.OsFs{}, dotPath, configPath)
+    } else {
+      fs.RemoveAll(configPath)
+    }
+
+    if(DryRun) {
+      log.Printf("Will link %s -> %s\n", dotPath, configPath)
+    } else {
+      err = afero.OsFs.SymlinkIfPossible(afero.OsFs{}, dotPath, configPath)
+    }
     if err != nil {
       log.Fatalf("Cannot symlink %s: %s", entry.Name(), err.Error())
     }
