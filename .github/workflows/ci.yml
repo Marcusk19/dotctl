@@ -15,4 +15,4 @@ jobs:
       - name: Install dependencies
         run: go get .
       - name: Test with Go CLI
-        run: go test -v ./test
+        run: TESTING=true go test -v ./test

@@ -4,6 +4,7 @@ Copyright © 2024 Marcus Kok
 package cmd
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -38,11 +39,9 @@ var FileSystem afero.Fs
 func init() {
   // define flags and config sections
 
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.bender.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-  print("init of root\n")
   defaultDotPath := os.Getenv("HOME") + "/.dotfiles/"
   defaultConfPath := os.Getenv("HOME") + "/.config/"
   RootCmd.PersistentFlags().StringVar(
@@ -63,22 +62,31 @@ func init() {
   viper.BindEnv("testing")
   viper.SetDefault("testing", false)
 
+  viper.SetConfigName("bender.yml")
+  viper.SetConfigType("yaml")
+  viper.AddConfigPath(filepath.Join(defaultDotPath, "bender"))
+  viper.AddConfigPath("./bender")
+
+  err := viper.ReadInConfig()
+  if err != nil {
+    fmt.Println("No config detected. You can generate one by using 'bender init'")
+  }
+
   FileSystem = UseFilesystem()
 
 }
 
 func UseFilesystem() afero.Fs {
   testing := viper.Get("testing")
-  if(testing == true) {
-    print("Using temporary testing filesystem\n")
+  if(testing == "true") {
     return afero.NewMemMapFs()
   } else {
     return afero.NewOsFs()
   }
 }
 
+// TODO: this can probably be removed
 func SetUpForTesting() afero.Fs {
-  print("Setting up testing environment\n")
   viper.Set("testing", true)
   fs := UseFilesystem()
 
