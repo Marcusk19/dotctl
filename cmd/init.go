@@ -48,65 +48,31 @@ var initCommand = &cobra.Command {
   Use: "init",
   Short: "Copy configs to dotfile directory",
   Long: "Searches existing config directory for configs and then copies them to dotfile directory",
-  Run: func(cmd *cobra.Command, args []string) {
+  Run: runInitCommand,
+}
 
-    fs := FileSystem
+func runInitCommand(cmd *cobra.Command, args []string) {
+  fs := FileSystem
 
-    if(viper.Get("testing") == true && fs.Name() != "MemMapFS") {
-      log.Fatalf("wrong filesystem, got %s", fs.Name())
-    }
+  if(viper.Get("testing") == true && fs.Name() != "MemMapFS") {
+    log.Fatalf("wrong filesystem, got %s", fs.Name())
+  }
 
-    var rootpath string
-    if len(args) <= 0 {
-      fmt.Fprintf(cmd.OutOrStdout(), "no path provided, assuming /usr/bin/\n")
-      rootpath = "/usr/bin/"
-    } else {
-      rootpath = args[0]
-    }
+  err := fs.MkdirAll(path.Join(DotfilePath, "bender"), 0755)
+  if err != nil {
+    log.Fatalf("Unable to create dotfile structure: %s", error.Error(err))
+  }
 
-    if rootpath[len(rootpath)-1:] != "/" {
-      log.Fatal("path needs trailing slash\n")
-    }
+  _, err = fs.Create(path.Join(DotfilePath, "bender/bender.yml"))
+  if err != nil {
+    panic(fmt.Errorf("Unable to create config file %w", err))
+  }
 
-    // TODO make a configurable list of binaries we want to look for
-    var programs []string
-    var acceptedprograms [3] string 
-    acceptedprograms[0] = "nvim"
-    acceptedprograms[1] = "tmux"
-    acceptedprograms[2] = "alacritty"
-    
-    err := afero.Walk(fs, rootpath, func(path string, info os.FileInfo, err error) error {
-      if err != nil {
-        log.Fatalf("problem walking path %s\n", err)
-        return nil
-      }
-
-      for _, acceptedprogram := range(acceptedprograms) {
-        if path == rootpath + acceptedprogram {
-          programs = append(programs, path[len(rootpath):])
-        }
-      }
-      return nil
-    })
-
+  if (viper.Get("testing") != "true"){
+    _, err = git.PlainInit(DotfilePath, false)
     if err != nil {
       log.Fatal(err)
     }
-
-    fmt.Fprintf(cmd.OutOrStdout(), "binaries found: \n =======================\n")
-    for _, program := range(programs) {
-      fmt.Fprintf(cmd.OutOrStdout(), program + "\n" )
-    }
-
-    createDotfileStructure(programs, fs)
-    copyExistingConfigs(programs, fs)
-
-    if (viper.Get("testing") != true){
-      _, err = git.PlainInit(DotfilePath, false)
-      if err != nil {
-        log.Fatal(err)
-      }
-    }
-    fmt.Fprintf(cmd.OutOrStdout(), "Successfully created dotfiles repository\n")
-  },
+  }
+  fmt.Fprintf(cmd.OutOrStdout(), "Successfully created dotfiles repository\n")
 }

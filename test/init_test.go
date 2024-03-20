@@ -11,23 +11,22 @@ import (
 )
 
 func TestInitCommand(t *testing.T) {
-  print("setting test var\n")
   viper.Set("testing", true)
 
-  fs := cmd.SetUpForTesting()
+  fs := cmd.FileSystem
 
   bender := cmd.RootCmd
   actual := new(bytes.Buffer)
 
   bender.SetOut(actual)
   bender.SetErr(actual)
-  bender.SetArgs([]string{"init", "bin/", "--dotfile-path=bender_test/.dotfiles", "--config-path=bender_test/.config"})
+  bender.SetArgs([]string{"init", "--dotfile-path=bender_test/.dotfiles"})
   
   bender.Execute()
 
   homedir := "bender_test/"
 
-  _, err := afero.ReadFile(fs, filepath.Join(homedir, ".dotfiles/alacritty/alacritty.conf")) 
+  _, err := afero.ReadFile(fs, filepath.Join(homedir, ".dotfiles/bender/bender.yml")) 
   if err != nil {
     t.Error(err.Error())
   }
