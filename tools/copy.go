@@ -34,6 +34,7 @@ func CopyFile(os afero.Fs, srcFile, destFile string) error{
 
   destination, err := os.Create(destFile)
   if err != nil {
+    fmt.Printf("Error creating destination file %s\n", destFile)
     return err
   }
   defer destination.Close()
@@ -44,6 +45,7 @@ func CopyFile(os afero.Fs, srcFile, destFile string) error{
 }
 
 func CopyDir(os afero.Fs, srcDir, destDir string) error {
+  os.Mkdir(destDir, 0755)
   entries, err := afero.ReadDir(os, srcDir)
   if err != nil {
     return err

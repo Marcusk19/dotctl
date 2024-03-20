@@ -26,7 +26,7 @@ func TestInitCommand(t *testing.T) {
 
   homedir := "bender_test/"
 
-  _, err := afero.ReadFile(fs, filepath.Join(homedir, ".dotfiles/bender/bender.yml")) 
+  _, err := afero.ReadFile(fs, filepath.Join(homedir, ".dotfiles/bender/config")) 
   if err != nil {
     t.Error(err.Error())
   }
