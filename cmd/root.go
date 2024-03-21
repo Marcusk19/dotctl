@@ -33,6 +33,7 @@ func Execute() {
 
 var DotfilePath string
 var ConfigPath string
+var DryRun bool
 
 var FileSystem afero.Fs
 
@@ -56,13 +57,14 @@ func init() {
     defaultConfPath,
     "Path pointing to config directory",
   )
+  RootCmd.PersistentFlags().BoolVarP(&DryRun, "dry-run", "d", false, "Only output which symlinks will be created")
   viper.BindPFlag("dotfile-path", RootCmd.PersistentFlags().Lookup("dotfile-path"))
   viper.BindPFlag("config-path", RootCmd.PersistentFlags().Lookup("config-path"))
 
   viper.BindEnv("testing")
   viper.SetDefault("testing", false)
 
-  viper.SetConfigName("bender.yml")
+  viper.SetConfigName("config")
   viper.SetConfigType("yaml")
   viper.AddConfigPath(filepath.Join(defaultDotPath, "bender"))
   viper.AddConfigPath("./bender")

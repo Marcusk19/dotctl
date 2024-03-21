@@ -63,10 +63,12 @@ func runInitCommand(cmd *cobra.Command, args []string) {
     log.Fatalf("Unable to create dotfile structure: %s", error.Error(err))
   }
 
-  _, err = fs.Create(path.Join(DotfilePath, "bender/bender.yml"))
+  _, err = fs.Create(path.Join(DotfilePath, "bender/config"))
   if err != nil {
     panic(fmt.Errorf("Unable to create config file %w", err))
   }
+
+  viper.WriteConfig()
 
   if (viper.Get("testing") != "true"){
     _, err = git.PlainInit(DotfilePath, false)
@@ -74,5 +76,6 @@ func runInitCommand(cmd *cobra.Command, args []string) {
       log.Fatal(err)
     }
   }
+
   fmt.Fprintf(cmd.OutOrStdout(), "Successfully created dotfiles repository\n")
 }

@@ -14,11 +14,8 @@ var linkCommand = &cobra.Command {
   Run: runLinkCommand,
 }
 
-var DryRun bool
-
 func init() {
   RootCmd.AddCommand(linkCommand)
-  linkCommand.Flags().BoolVarP(&DryRun, "dry-run", "d", false, "Only output which symlinks will be created")
 }
 
 func runLinkCommand(cmd *cobra.Command, args []string) {
