@@ -42,7 +42,9 @@ func setUpTesting() {
   fs.Create(filepath.Join(homedir, ".dotfiles/bender/config"))
   fs.MkdirAll(filepath.Join(homedir, ".dotfiles/someconfig/"), 0755)
 
+  viper.Set("dotfile-path", filepath.Join(homedir, ".dotfiles"))
   viper.Set("someconfig", filepath.Join(homedir, ".config/someconfig/"))
+  viper.Set("testing", true)
 
 }
 

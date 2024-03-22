@@ -53,7 +53,7 @@ func runLinkCommand(cmd *cobra.Command, args []string) {
     if(DryRun) {
       log.Printf("Will link %s -> %s\n", configPath, dotPath)
     } else {
-      if(testing == "true") {
+      if(testing == true) {
         fmt.Fprintf(cmd.OutOrStdout(), "%s,%s", configPath, dotPath)
       } else {
         err = afero.OsFs.SymlinkIfPossible(afero.OsFs{}, dotPath, configPath)

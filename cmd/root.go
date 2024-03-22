@@ -67,7 +67,6 @@ func init() {
   viper.SetConfigName("config")
   viper.SetConfigType("yaml")
   viper.AddConfigPath("./tmp/dotfiles/bender")
-  fmt.Printf("dotfile path is %s\n", DotfilePath)
   viper.AddConfigPath(filepath.Join(DotfilePath, "bender"))
 
   err := viper.ReadInConfig()
