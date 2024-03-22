@@ -66,10 +66,11 @@ func init() {
 
   viper.SetConfigName("config")
   viper.SetConfigType("yaml")
-  viper.AddConfigPath(filepath.Join(defaultDotPath, "bender"))
-  viper.AddConfigPath("./bender")
+  viper.AddConfigPath("./tmp/dotfiles/bender")
+  viper.AddConfigPath(filepath.Join(DotfilePath, "bender"))
 
   err := viper.ReadInConfig()
+
   if err != nil {
     fmt.Println("No config detected. You can generate one by using 'bender init'")
   }

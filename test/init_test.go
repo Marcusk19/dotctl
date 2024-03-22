@@ -20,13 +20,13 @@ func TestInitCommand(t *testing.T) {
 
   bender.SetOut(actual)
   bender.SetErr(actual)
-  bender.SetArgs([]string{"init", "--dotfile-path=bender_test/.dotfiles"})
+  bender.SetArgs([]string{"init", "--dotfile-path=bender_test/dotfiles"})
   
   bender.Execute()
 
   homedir := "bender_test/"
 
-  _, err := afero.ReadFile(fs, filepath.Join(homedir, ".dotfiles/bender/config")) 
+  _, err := afero.ReadFile(fs, filepath.Join(homedir, "dotfiles/bender/config")) 
   if err != nil {
     t.Error(err.Error())
   }

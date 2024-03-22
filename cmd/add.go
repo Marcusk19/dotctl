@@ -34,16 +34,21 @@ func runAddCommand(cmd *cobra.Command, args []string) {
   dirs := strings.Split(configSrc, "/")
   name := dirs[len(dirs) - 1]
   viper.Set(name, configSrc)
-  viper.WriteConfig()
+  err := viper.WriteConfig()
+  if err != nil {
+    fmt.Printf("Problem updating bender config %s", err)
+  }
 
-  dotfileDest := filepath.Join(DotfilePath, name)
+  dotfilePath := viper.Get("dotfile-path").(string)
+
+  dotfileDest := filepath.Join(dotfilePath, name)
 
   if DryRun {
     fmt.Printf("Will copy %s -> %s \n", configSrc, dotfileDest)
     return
   }
   
-  err := tools.CopyDir(fs, configSrc, dotfileDest)
+  err = tools.CopyDir(fs, configSrc, dotfileDest)
   if err != nil {
     log.Fatal(err)
   }

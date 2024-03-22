@@ -68,7 +68,10 @@ func runInitCommand(cmd *cobra.Command, args []string) {
     panic(fmt.Errorf("Unable to create config file %w", err))
   }
 
-  viper.WriteConfig()
+  err = viper.WriteConfig()
+  if err != nil {
+    fmt.Printf("Unable to write config on init: %s\n", err)
+  }
 
   if (viper.Get("testing") != "true"){
     _, err = git.PlainInit(DotfilePath, false)
@@ -77,5 +80,5 @@ func runInitCommand(cmd *cobra.Command, args []string) {
     }
   }
 
-  fmt.Fprintf(cmd.OutOrStdout(), "Successfully created dotfiles repository\n")
+  fmt.Fprintf(cmd.OutOrStdout(), "Successfully created dotfiles repository at %s\n", DotfilePath)
 }
