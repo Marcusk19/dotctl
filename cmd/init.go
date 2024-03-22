@@ -53,6 +53,9 @@ var initCommand = &cobra.Command {
 
 func runInitCommand(cmd *cobra.Command, args []string) {
   fs := FileSystem
+  // if user has passed a dotfile path flag need to add it to
+  // viper's search path for a config file
+  viper.AddConfigPath(filepath.Join(DotfilePath, "bender"))
 
   if(viper.Get("testing") == true && fs.Name() != "MemMapFS") {
     log.Fatalf("wrong filesystem, got %s", fs.Name())
@@ -69,8 +72,8 @@ func runInitCommand(cmd *cobra.Command, args []string) {
   }
 
   err = viper.WriteConfig()
-  if err != nil {
-    fmt.Printf("Unable to write config on init: %s\n", err)
+  if err != nil && viper.Get("testing") != true {
+    log.Fatalf("Unable to write config on init: %s\n", err)
   }
 
   if (viper.Get("testing") != "true"){

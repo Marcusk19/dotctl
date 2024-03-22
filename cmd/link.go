@@ -20,12 +20,12 @@ func init() {
 }
 
 func runLinkCommand(cmd *cobra.Command, args []string) {
-  fs := UseFilesystem()
+  fs := FileSystem
   fmt.Println("Symlinking dotfiles...")
   dotfileRoot := viper.Get("dotfile-path").(string)
   entries, err := afero.ReadDir(fs, dotfileRoot)
   if err != nil {
-    log.Fatal(err)
+    log.Fatalf("Could not read dotfiles directory: %s\n",err)
   }
   for _, entry := range(entries) {
     configName := entry.Name()
@@ -34,7 +34,10 @@ func runLinkCommand(cmd *cobra.Command, args []string) {
     }
     dotPath := filepath.Join(dotfileRoot, entry.Name())
 
-    configPath := viper.Get(configName).(string)
+    configPath := viper.GetString(configName)
+    if configPath == ""{
+      fmt.Fprintf(cmd.OutOrStdout(), "Warning: could not find config for %s\n", entry.Name())
+    }
 
 
     // destination needs to be removed before symlink
