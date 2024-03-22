@@ -1,15 +1,36 @@
 # Bender
 ![](assets/bender.png)
 
-A general purpose CLI tool.
+A cli tool to manage your dotfiles
+## About
+Bender is a tool to help you easily manage your dotfiles and sync them across separate machines using
+git. It aims to abstract away the manual effort of symlinking your dotfiles to config directories and
+updating them with git.
 
 ## Installation
 - TBD
 
 ## Usage
-use pretty command to get whitespace for special characters like `\n` and `\t`
 
-e.g.
 ```bash
-bender pretty example.txt
+# init sets up the config file and directory to hold all dotfiles
+bender init --dotfile-path=/path/to/dotfile/repo
+# add a config directory for bender to track
+bender add /.config/nvim
+# create symlinks
+bender link
 ```
+
+## Development
+It's preferable to create a temporary directory and copy your system's config
+directory over to avoid making undesirable changes to your system.
+A couple of useful makefile scripts exist to set up and tear down this.
+It will create a testing directory in `./tmp/config` and copy your system configs
+over.
+
+```bash
+make sandbox # creates the directory and copies over from ~/.config
+make clean # removes directory
+```
+
+

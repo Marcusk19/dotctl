@@ -66,10 +66,11 @@ func init() {
 
   viper.SetConfigName("config")
   viper.SetConfigType("yaml")
-  viper.AddConfigPath(filepath.Join(defaultDotPath, "bender"))
-  viper.AddConfigPath("./bender")
+  viper.AddConfigPath("./tmp/dotfiles/bender")
+  viper.AddConfigPath(filepath.Join(DotfilePath, "bender"))
 
   err := viper.ReadInConfig()
+
   if err != nil {
     fmt.Println("No config detected. You can generate one by using 'bender init'")
   }
@@ -88,29 +89,4 @@ func UseFilesystem() afero.Fs {
 }
 
 // TODO: this can probably be removed
-func SetUpForTesting() afero.Fs {
-  viper.Set("testing", true)
-  fs := UseFilesystem()
-
-  homedir := "bender_test/"
-  fs.MkdirAll(filepath.Join(homedir, ".config/"), 0755)
-  fs.MkdirAll(filepath.Join(homedir, ".dotfiles/"), 0755)
-
-  fs.Mkdir("bin/", 0755)
-  fs.Create("bin/alacritty")
-  fs.Create("bin/nvim")
-  fs.Create("bin/tmux")
-
-  fs.Mkdir(filepath.Join(homedir, ".config/alacritty"), 0755)
-  fs.Mkdir(filepath.Join(homedir, ".config/nvim"), 0755)
-  fs.Mkdir(filepath.Join(homedir, ".config/tmux"), 0755)
-
-  fs.Create(filepath.Join(homedir, ".config/alacritty/alacritty.conf"))
-  fs.Create(filepath.Join(homedir, ".config/nvim/nvim.conf"))
-  fs.Create(filepath.Join(homedir, ".config/tmux/tmux.conf"))
-
-  FileSystem = fs
- 
-  return fs
-}
 

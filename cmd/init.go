@@ -53,6 +53,9 @@ var initCommand = &cobra.Command {
 
 func runInitCommand(cmd *cobra.Command, args []string) {
   fs := FileSystem
+  // if user has passed a dotfile path flag need to add it to
+  // viper's search path for a config file
+  viper.AddConfigPath(filepath.Join(DotfilePath, "bender"))
 
   if(viper.Get("testing") == true && fs.Name() != "MemMapFS") {
     log.Fatalf("wrong filesystem, got %s", fs.Name())
@@ -68,7 +71,10 @@ func runInitCommand(cmd *cobra.Command, args []string) {
     panic(fmt.Errorf("Unable to create config file %w", err))
   }
 
-  viper.WriteConfig()
+  err = viper.WriteConfig()
+  if err != nil && viper.Get("testing") != true {
+    log.Fatalf("Unable to write config on init: %s\n", err)
+  }
 
   if (viper.Get("testing") != "true"){
     _, err = git.PlainInit(DotfilePath, false)
@@ -77,5 +83,5 @@ func runInitCommand(cmd *cobra.Command, args []string) {
     }
   }
 
-  fmt.Fprintf(cmd.OutOrStdout(), "Successfully created dotfiles repository\n")
+  fmt.Fprintf(cmd.OutOrStdout(), "Successfully created dotfiles repository at %s\n", DotfilePath)
 }
