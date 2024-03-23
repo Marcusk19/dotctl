@@ -88,5 +88,11 @@ func UseFilesystem() afero.Fs {
   }
 }
 
-// TODO: this can probably be removed
+func CheckIfError(err error) {
+  if err != nil {
+    panic(err)
+  }
+  return
+}
+
 

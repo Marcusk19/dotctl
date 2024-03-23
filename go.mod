@@ -1,6 +1,6 @@
 module github.com/Marcusk19/bender
 
-go 1.22.0
+go 1.21.0
 
 require (
 	github.com/go-git/go-git/v5 v5.11.0
