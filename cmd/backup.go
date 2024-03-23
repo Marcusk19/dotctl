@@ -8,7 +8,6 @@ import (
 	"github.com/Marcusk19/bender/tools"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/object"
-	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
 
@@ -22,19 +21,6 @@ var backupCommand = &cobra.Command {
   Run: runBackup,
 }
 
-func gitAddFiles(worktree *git.Worktree, fs afero.Fs) error {
-  entries, err := afero.ReadDir(fs, DotfilePath)
-  if err != nil {
-    return err
-  }
-  for _, entry := range(entries) {
-    _, err = worktree.Add(entry.Name())
-    if err != nil {
-      return err
-    }
-  }
-  return nil
-}
 
 func runBackup(cmd *cobra.Command, args []string) {
   fmt.Fprintf(cmd.OutOrStdout(), "Backing up %s...\n", DotfilePath)
