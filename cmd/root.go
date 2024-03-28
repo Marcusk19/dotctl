@@ -15,9 +15,9 @@ import (
 
 
 var RootCmd = &cobra.Command{
-	Use:   "bender",
+	Use:   "dotctl",
 	Short: "dotfile management",
-	Long: `Bender is a CLI tool for syncing your
+	Long: `Dotctl is a CLI tool for syncing your
   dotfiles. It provides an opiniated way to symlink
   a dotfile directory to various config directories.`,
 }
@@ -66,13 +66,13 @@ func init() {
 
   viper.SetConfigName("config")
   viper.SetConfigType("yaml")
-  viper.AddConfigPath("./tmp/dotfiles/bender")
-  viper.AddConfigPath(filepath.Join(DotfilePath, "bender"))
+  viper.AddConfigPath("./tmp/dotfiles/dotctl")
+  viper.AddConfigPath(filepath.Join(DotfilePath, "dotctl"))
 
   err := viper.ReadInConfig()
 
   if err != nil {
-    fmt.Println("No config detected. You can generate one by using 'bender init'")
+    fmt.Println("No config detected. You can generate one by using 'dotctl init'")
   }
 
   FileSystem = UseFilesystem()

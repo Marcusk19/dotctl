@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/Marcusk19/bender/cmd"
+	"github.com/Marcusk19/dotctl/cmd"
 	"github.com/spf13/afero"
 	"github.com/spf13/viper"
 )
@@ -15,18 +15,18 @@ func TestInitCommand(t *testing.T) {
 
   fs := cmd.FileSystem
 
-  bender := cmd.RootCmd
+  dotctl := cmd.RootCmd
   actual := new(bytes.Buffer)
 
-  bender.SetOut(actual)
-  bender.SetErr(actual)
-  bender.SetArgs([]string{"init", "--dotfile-path=bender_test/dotfiles"})
+  dotctl.SetOut(actual)
+  dotctl.SetErr(actual)
+  dotctl.SetArgs([]string{"init", "--dotfile-path=dotctl_test/dotfiles"})
   
-  bender.Execute()
+  dotctl.Execute()
 
-  homedir := "bender_test/"
+  homedir := "dotctl_test/"
 
-  _, err := afero.ReadFile(fs, filepath.Join(homedir, "dotfiles/bender/config")) 
+  _, err := afero.ReadFile(fs, filepath.Join(homedir, "dotfiles/dotctl/config")) 
   if err != nil {
     t.Error(err.Error())
   }

@@ -7,7 +7,7 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/Marcusk19/bender/tools"
+	"github.com/Marcusk19/dotctl/tools"
 	"github.com/go-git/go-git/v5"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
@@ -55,18 +55,18 @@ func runInitCommand(cmd *cobra.Command, args []string) {
   fs := FileSystem
   // if user has passed a dotfile path flag need to add it to
   // viper's search path for a config file
-  viper.AddConfigPath(filepath.Join(DotfilePath, "bender"))
+  viper.AddConfigPath(filepath.Join(DotfilePath, "dotctl"))
 
   if(viper.Get("testing") == true && fs.Name() != "MemMapFS") {
     log.Fatalf("wrong filesystem, got %s", fs.Name())
   }
 
-  err := fs.MkdirAll(path.Join(DotfilePath, "bender"), 0755)
+  err := fs.MkdirAll(path.Join(DotfilePath, "dotctl"), 0755)
   if err != nil {
     log.Fatalf("Unable to create dotfile structure: %s", error.Error(err))
   }
 
-  _, err = fs.Create(path.Join(DotfilePath, "bender/config"))
+  _, err = fs.Create(path.Join(DotfilePath, "dotctl/config"))
   if err != nil {
     panic(fmt.Errorf("Unable to create config file %w", err))
   }
