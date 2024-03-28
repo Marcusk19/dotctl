@@ -1,9 +1,8 @@
-# Bender
-![](assets/bender.png)
+# Dotctl
 
 A cli tool to manage your dotfiles
 ## About
-Bender is a tool to help you easily manage your dotfiles and sync them across separate machines using
+Dotctl is a tool to help you easily manage your dotfiles and sync them across separate machines using
 git. It aims to abstract away the manual effort of symlinking your dotfiles to config directories and
 updating them with git.
 
@@ -14,11 +13,11 @@ updating them with git.
 
 ```bash
 # init sets up the config file and directory to hold all dotfiles
-bender init --dotfile-path=/path/to/dotfile/repo
-# add a config directory for bender to track
-bender add /.config/nvim
+dotctl init --dotfile-path=/path/to/dotfile/repo
+# add a config directory for dotctl to track
+dotctl add /.config/nvim
 # create symlinks
-bender link
+dotctl link
 ```
 
 ## Development

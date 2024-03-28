@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/Marcusk19/bender/tools"
+	"github.com/Marcusk19/dotctl/tools"
 	"github.com/spf13/afero"
 )
 

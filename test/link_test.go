@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/Marcusk19/bender/cmd"
+	"github.com/Marcusk19/dotctl/cmd"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
@@ -15,14 +15,14 @@ import (
 
 func TestLinkCommand(t *testing.T) {
   setUpTesting()
-  bender := cmd.RootCmd
+  dotctl := cmd.RootCmd
   actual := new(bytes.Buffer)
 
-  bender.SetOut(actual)
-  bender.SetErr(actual)
-  bender.SetArgs([]string{"link"})
+  dotctl.SetOut(actual)
+  dotctl.SetErr(actual)
+  dotctl.SetArgs([]string{"link"})
 
-  bender.Execute()
+  dotctl.Execute()
 
   homedir := os.Getenv("HOME")
   someconfig := filepath.Join(homedir, ".config/someconfig/")
@@ -38,8 +38,8 @@ func TestLinkCommand(t *testing.T) {
 func setUpTesting() {
   fs := cmd.FileSystem
   homedir := os.Getenv("HOME")
-  fs.MkdirAll(filepath.Join(homedir, ".dotfiles/bender"), 0755)
-  fs.Create(filepath.Join(homedir, ".dotfiles/bender/config"))
+  fs.MkdirAll(filepath.Join(homedir, ".dotfiles/dotctl"), 0755)
+  fs.Create(filepath.Join(homedir, ".dotfiles/dotctl/config"))
   fs.MkdirAll(filepath.Join(homedir, ".dotfiles/someconfig/"), 0755)
 
   viper.Set("dotfile-path", filepath.Join(homedir, ".dotfiles"))
@@ -50,5 +50,5 @@ func setUpTesting() {
 
 func tearDownTesting() {
   fs := cmd.FileSystem
-  fs.RemoveAll("bender_test/")
+  fs.RemoveAll("dotctl_test/")
 }

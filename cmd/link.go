@@ -13,6 +13,8 @@ import (
 var linkCommand = &cobra.Command {
   Use: "link",
   Run: runLinkCommand,
+  Short: "generate symlinks according to config",
+  Long: "add longer description", // TODO add longer description here
 }
 
 func init() {
@@ -29,7 +31,7 @@ func runLinkCommand(cmd *cobra.Command, args []string) {
   }
   for _, entry := range(entries) {
     configName := entry.Name()
-    if configName == ".git"  || configName == "bender" {
+    if configName == ".git"  || configName == "dotctl" {
       continue
     }
     dotPath := filepath.Join(dotfileRoot, entry.Name())

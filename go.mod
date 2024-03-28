@@ -1,4 +1,4 @@
-module github.com/Marcusk19/bender
+module github.com/Marcusk19/dotctl
 
 go 1.21.0
 

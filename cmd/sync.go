@@ -28,7 +28,7 @@ func init() {
     "URL of remote repository",
   )
 
-  viper.BindPFlag("bender-origin", syncCommand.Flags().Lookup("remote"))
+  viper.BindPFlag("dotctl-origin", syncCommand.Flags().Lookup("remote"))
 }
 
 var syncCommand = &cobra.Command{
@@ -62,7 +62,7 @@ func gitAddFiles(worktree *git.Worktree, fs afero.Fs) error {
 }
 
 func runSyncCommand(cmd *cobra.Command, args []string) {
-	origin := viper.GetString("bender-origin")
+	origin := viper.GetString("dotctl-origin")
 	if origin == "" {
 		fmt.Fprintln(cmd.OutOrStdout(), "No remote repository found")
 		return
@@ -126,7 +126,7 @@ func runSyncCommand(cmd *cobra.Command, args []string) {
 
   commit, err := w.Commit(commitMessage, &git.CommitOptions{
     Author: &object.Signature{
-      Name: "bender CLI",
+      Name: "dotctl CLI",
       Email: "example@example.com",
       When: time.Now(),
     },

@@ -1,5 +1,5 @@
 clean:
-	rm -rf test/bender_test 2> /dev/null
+	rm -rf test/dotctl_test 2> /dev/null
 	rm -rf tmp 2> /dev/null
 
 sandbox:

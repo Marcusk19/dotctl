@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/Marcusk19/bender/tools"
+	"github.com/Marcusk19/dotctl/tools"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -17,7 +17,7 @@ func init() {
 
 var addCommand = &cobra.Command {
   Use: "add",
-  Short: "Adds config to be tracked by bender",
+  Short: "Adds config to be tracked by dotctl",
   Long: "TODO: add longer description", // TODO add more description
   Run: runAddCommand,
 }
@@ -36,7 +36,7 @@ func runAddCommand(cmd *cobra.Command, args []string) {
   viper.Set(name, configSrc)
   err := viper.WriteConfig()
   if err != nil {
-    fmt.Printf("Problem updating bender config %s", err)
+    fmt.Printf("Problem updating dotctl config %s", err)
   }
 
   dotfilePath := viper.Get("dotfile-path").(string)
