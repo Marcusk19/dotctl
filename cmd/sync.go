@@ -53,6 +53,9 @@ func gitAddFiles(worktree *git.Worktree, fs afero.Fs) error {
     return err
   }
   for _, entry := range(entries) {
+    if(entry.Name() == "dotctl") {
+      continue
+    }
     _, err = worktree.Add(entry.Name())
     if err != nil {
       return err
