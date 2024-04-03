@@ -25,20 +25,17 @@ func runLinkCommand(cmd *cobra.Command, args []string) {
   fs := FileSystem
   fmt.Println("Symlinking dotfiles...")
   dotfileRoot := viper.Get("dotfile-path").(string)
-  entries, err := afero.ReadDir(fs, dotfileRoot)
-  if err != nil {
-    log.Fatalf("Could not read dotfiles directory: %s\n",err)
-  }
-  for _, entry := range(entries) {
-    configName := entry.Name()
+
+  links := viper.GetStringMapString("links")
+
+  for configName, configPath := range links {
     if configName == ".git"  || configName == "dotctl" {
       continue
     }
-    dotPath := filepath.Join(dotfileRoot, entry.Name())
+    dotPath := filepath.Join(dotfileRoot, configName)
 
-    configPath := viper.GetString(configName)
     if configPath == ""{
-      fmt.Fprintf(cmd.OutOrStdout(), "Warning: could not find config for %s\n", entry.Name())
+      fmt.Fprintf(cmd.OutOrStdout(), "Warning: could not find config for %s\n", configName)
     }
 
 
@@ -58,12 +55,15 @@ func runLinkCommand(cmd *cobra.Command, args []string) {
       if(testing == true) {
         fmt.Fprintf(cmd.OutOrStdout(), "%s,%s", configPath, dotPath)
       } else {
-        err = afero.OsFs.SymlinkIfPossible(afero.OsFs{}, dotPath, configPath)
+        err := afero.OsFs.SymlinkIfPossible(afero.OsFs{}, dotPath, configPath)
+        if err != nil {
+          log.Fatalf("Cannot symlink %s: %s\n", configName, err.Error())
+        } else {
+          fmt.Printf("%s linked\n", configName)
+        }
       }
     }
-    if err != nil {
-      log.Fatalf("Cannot symlink %s: %s", entry.Name(), err.Error())
-    }
   }
+
 
 }
