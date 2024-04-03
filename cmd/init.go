@@ -81,6 +81,23 @@ func runInitCommand(cmd *cobra.Command, args []string) {
     if err != nil {
       log.Fatal(err)
     }
+
+    gitignoreContent := []byte (`
+      # ignore dotctl config for individual installations
+      dotctl/
+
+      .DS_Store
+      *.swp
+      *.bak
+      *.tmp
+    `)
+
+    err := afero.WriteFile(fs, filepath.Join(DotfilePath, ".gitignore"), gitignoreContent, 0644)
+
+    if err != nil {
+      log.Fatal(err)
+    }
+
   }
 
   fmt.Fprintf(cmd.OutOrStdout(), "Successfully created dotfiles repository at %s\n", DotfilePath)
