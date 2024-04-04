@@ -36,16 +36,17 @@ func TestLinkCommand(t *testing.T) {
 }
 
 func setUpTesting() {
+  viper.Set("testing", true)
+
   fs := cmd.FileSystem
   homedir := os.Getenv("HOME")
+  fakeLinks := map[string]string {"someconfig": filepath.Join(homedir, ".config/someconfig")}
+  viper.Set("links", fakeLinks)
   fs.MkdirAll(filepath.Join(homedir, "dotfiles/dotctl"), 0755)
   fs.Create(filepath.Join(homedir, "dotfiles/dotctl/config"))
-  fs.MkdirAll(filepath.Join(homedir, "dotfiles/someconfig/"), 0755)
 
   viper.Set("dotfile-path", filepath.Join(homedir, "dotfiles"))
   viper.Set("someconfig", filepath.Join(homedir, ".config/someconfig/"))
-  viper.Set("testing", true)
-
 }
 
 func tearDownTesting() {
