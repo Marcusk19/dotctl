@@ -61,14 +61,12 @@ func runAddCommand(cmd *cobra.Command, args []string) {
       IsConfirm: true,
     }
     overwrite, _ := confirm.Run()
-    if strings.ToUpper(overwrite) != "Y" {
-      return
+    if strings.ToUpper(overwrite) == "Y" {
+      err = tools.CopyDir(fs, configSrc, dotfileDest)
+      if err != nil {
+        log.Fatal(err)
+      }
+      fmt.Printf("Copied %s -> %s\n", configSrc, dotfileDest)
     }
   }
-  
-  err = tools.CopyDir(fs, configSrc, dotfileDest)
-  if err != nil {
-    log.Fatal(err)
-  }
-  fmt.Printf("Copied %s -> %s\n", configSrc, dotfileDest)
 }
