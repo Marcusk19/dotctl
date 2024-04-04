@@ -23,3 +23,5 @@ vendor/
 go.work
 
 tmp/
+
+dist/
