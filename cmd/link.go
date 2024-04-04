@@ -10,6 +10,12 @@ import (
 	"github.com/spf13/viper"
 )
 
+func init() {
+  RootCmd.AddCommand(linkCommand)
+  linkCommand.AddCommand(listCommand)
+}
+
+
 var linkCommand = &cobra.Command {
   Use: "link",
   Run: runLinkCommand,
@@ -17,9 +23,6 @@ var linkCommand = &cobra.Command {
   Long: "add longer description", // TODO add longer description here
 }
 
-func init() {
-  RootCmd.AddCommand(linkCommand)
-}
 
 func runLinkCommand(cmd *cobra.Command, args []string) {
   fs := FileSystem
@@ -64,6 +67,20 @@ func runLinkCommand(cmd *cobra.Command, args []string) {
       }
     }
   }
+}
 
 
+var listCommand = &cobra.Command {
+  Use: "list",
+  Run: runListCommand,
+  Short: "list configs that should be symlinked",
+  Long: "add longer description", // TODO add longer description here
+}
+
+func runListCommand(cmd *cobra.Command, args []string) {
+  links := viper.GetStringMapString("links")
+  fmt.Println("Configs added:")
+  for configName, configPath := range links {
+    fmt.Printf("%s: %s\n", configName, configPath)
+  }
 }
