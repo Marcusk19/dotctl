@@ -14,6 +14,7 @@ import (
 
 
 func TestLinkCommand(t *testing.T) {
+  oldDotfilePath := viper.GetString("dotfile-path")
   setUpTesting()
   dotctl := cmd.RootCmd
   actual := new(bytes.Buffer)
@@ -32,7 +33,7 @@ func TestLinkCommand(t *testing.T) {
 
   assert.Equal(t, expected, actual.String(), "actual differs from expected")
 
-  tearDownTesting()
+  tearDownTesting(oldDotfilePath)
 }
 
 func setUpTesting() {
@@ -49,7 +50,7 @@ func setUpTesting() {
   viper.Set("someconfig", filepath.Join(homedir, ".config/someconfig/"))
 }
 
-func tearDownTesting() {
-  fs := cmd.FileSystem
-  fs.RemoveAll("dotctl_test/")
+func tearDownTesting(oldDotfilePath string) {
+  viper.Set("dotfile-path", oldDotfilePath)
+  viper.WriteConfig()
 }

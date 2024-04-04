@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/Marcusk19/dotctl/tools"
+	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -49,6 +50,20 @@ func runAddCommand(cmd *cobra.Command, args []string) {
   if DryRun {
     fmt.Printf("Will copy %s -> %s \n", configSrc, dotfileDest)
     return
+  }
+
+  _, err = fs.Stat(dotfileDest)
+  if err == nil {
+    fmt.Printf("Looks like %s exists in current dotfile directory\n", dotfileDest) 
+    fmt.Println("Do you want to overwrite it?")
+    confirm := promptui.Prompt{
+      Label: "overwrite config",
+      IsConfirm: true,
+    }
+    overwrite, _ := confirm.Run()
+    if strings.ToUpper(overwrite) != "Y" {
+      return
+    }
   }
   
   err = tools.CopyDir(fs, configSrc, dotfileDest)

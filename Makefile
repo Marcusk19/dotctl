@@ -8,3 +8,4 @@ sandbox:
 
 unit-test:
 	TESTING=true go test -v ./test
+	rm -rf test/dotctl_test 2> /dev/null

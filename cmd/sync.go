@@ -98,6 +98,8 @@ func runSyncCommand(cmd *cobra.Command, args []string) {
   password := promptui.Prompt{
     Label: "password",
     Validate: validateInput,
+    HideEntered: true,
+    Mask: '*',
   }
 
   usernameVal, err := username.Run()
