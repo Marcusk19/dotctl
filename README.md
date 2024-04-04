@@ -13,11 +13,13 @@ updating them with git.
 
 ```bash
 # init sets up the config file and directory to hold all dotfiles
-dotctl init --dotfile-path=/path/to/dotfile/repo
+dotctl init
 # add a config directory for dotctl to track
-dotctl add /.config/nvim
+dotctl add ~/.config/nvim
 # create symlinks
 dotctl link
+# sync changes
+dotctl sync -r <your-git-repo>
 ```
 
 ## Development
