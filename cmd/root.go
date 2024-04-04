@@ -43,7 +43,7 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-  defaultDotPath := os.Getenv("HOME") + "/.dotfiles/"
+  defaultDotPath := os.Getenv("HOME") + "/dotfiles/"
   defaultConfPath := os.Getenv("HOME") + "/.config/"
   RootCmd.PersistentFlags().StringVar(
     &DotfilePath,
@@ -68,6 +68,8 @@ func init() {
   viper.SetConfigType("yaml")
   viper.AddConfigPath("./tmp/dotfiles/dotctl")
   viper.AddConfigPath(filepath.Join(DotfilePath, "dotctl"))
+
+  viper.SetDefault("links", map[string]string{})
 
   err := viper.ReadInConfig()
 

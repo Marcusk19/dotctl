@@ -26,7 +26,7 @@ func TestLinkCommand(t *testing.T) {
 
   homedir := os.Getenv("HOME")
   someconfig := filepath.Join(homedir, ".config/someconfig/")
-  somedot := filepath.Join(homedir, ".dotfiles/someconfig/")
+  somedot := filepath.Join(homedir, "dotfiles/someconfig/")
 
   expected := fmt.Sprintf("%s,%s", someconfig, somedot)
 
@@ -36,16 +36,17 @@ func TestLinkCommand(t *testing.T) {
 }
 
 func setUpTesting() {
-  fs := cmd.FileSystem
-  homedir := os.Getenv("HOME")
-  fs.MkdirAll(filepath.Join(homedir, ".dotfiles/dotctl"), 0755)
-  fs.Create(filepath.Join(homedir, ".dotfiles/dotctl/config"))
-  fs.MkdirAll(filepath.Join(homedir, ".dotfiles/someconfig/"), 0755)
-
-  viper.Set("dotfile-path", filepath.Join(homedir, ".dotfiles"))
-  viper.Set("someconfig", filepath.Join(homedir, ".config/someconfig/"))
   viper.Set("testing", true)
 
+  fs := cmd.FileSystem
+  homedir := os.Getenv("HOME")
+  fakeLinks := map[string]string {"someconfig": filepath.Join(homedir, ".config/someconfig")}
+  viper.Set("links", fakeLinks)
+  fs.MkdirAll(filepath.Join(homedir, "dotfiles/dotctl"), 0755)
+  fs.Create(filepath.Join(homedir, "dotfiles/dotctl/config"))
+
+  viper.Set("dotfile-path", filepath.Join(homedir, "dotfiles"))
+  viper.Set("someconfig", filepath.Join(homedir, ".config/someconfig/"))
 }
 
 func tearDownTesting() {

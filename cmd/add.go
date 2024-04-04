@@ -32,8 +32,11 @@ func runAddCommand(cmd *cobra.Command, args []string) {
 
   configSrc := args[0]
   dirs := strings.Split(configSrc, "/")
-  name := dirs[len(dirs) - 1]
-  viper.Set(name, configSrc)
+  name := dirs[len(dirs) - 1] // take the last section of the path, this should be the name
+
+  links := viper.GetStringMap("links")
+  links[name] = configSrc
+  viper.Set("links", links)
   err := viper.WriteConfig()
   if err != nil {
     fmt.Printf("Problem updating dotctl config %s", err)
