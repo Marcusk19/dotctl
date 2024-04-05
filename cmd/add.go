@@ -26,8 +26,10 @@ var addCommand = &cobra.Command {
 func runAddCommand(cmd *cobra.Command, args []string) {
   fs := FileSystem
 
+  testing := viper.GetBool("testing")
+
   if len(args) <= 0 {
-    fmt.Println("ERROR: requires at least one argument")
+    fmt.Println("ERROR: requires config path")
     return
   }
 
@@ -38,9 +40,11 @@ func runAddCommand(cmd *cobra.Command, args []string) {
   links := viper.GetStringMap("links")
   links[name] = configSrc
   viper.Set("links", links)
-  err := viper.WriteConfig()
-  if err != nil {
-    fmt.Printf("Problem updating dotctl config %s", err)
+  if !testing {
+    err := viper.WriteConfig()
+    if err != nil {
+      fmt.Printf("Problem updating dotctl config %s", err)
+    }
   }
 
   dotfilePath := viper.Get("dotfile-path").(string)
@@ -52,7 +56,7 @@ func runAddCommand(cmd *cobra.Command, args []string) {
     return
   }
 
-  _, err = fs.Stat(dotfileDest)
+  _, err := fs.Stat(dotfileDest)
   if err == nil {
     fmt.Printf("Looks like %s exists in current dotfile directory\n", dotfileDest) 
     fmt.Println("Do you want to overwrite it?")
