@@ -55,6 +55,7 @@ func runInitCommand(cmd *cobra.Command, args []string) {
   fs := FileSystem
   // if user has passed a dotfile path flag need to add it to
   // viper's search path for a config file
+  testing := viper.GetBool("testing")
   viper.AddConfigPath(filepath.Join(DotfilePath, "dotctl"))
 
   if(viper.Get("testing") == true && fs.Name() != "MemMapFS") {
@@ -71,12 +72,12 @@ func runInitCommand(cmd *cobra.Command, args []string) {
     panic(fmt.Errorf("Unable to create config file %w", err))
   }
 
-  err = viper.WriteConfig()
-  if err != nil && viper.Get("testing") != true {
-    log.Fatalf("Unable to write config on init: %s\n", err)
-  }
+  if !testing {
+    err = viper.WriteConfig()
+    if err != nil && viper.Get("testing") != true {
+      log.Fatalf("Unable to write config on init: %s\n", err)
+    }
 
-  if (viper.Get("testing") != "true"){
     _, err = git.PlainInit(DotfilePath, false)
     if err != nil {
       log.Fatal(err)

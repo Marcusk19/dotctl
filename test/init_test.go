@@ -2,6 +2,7 @@ package test
 
 import (
 	"bytes"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -20,11 +21,11 @@ func TestInitCommand(t *testing.T) {
 
   dotctl.SetOut(actual)
   dotctl.SetErr(actual)
-  dotctl.SetArgs([]string{"init", "--dotfile-path=dotctl_test/dotfiles"})
+  dotctl.SetArgs([]string{"init"})
   
   dotctl.Execute()
 
-  homedir := "dotctl_test/"
+  homedir := os.Getenv("HOME")
 
   _, err := afero.ReadFile(fs, filepath.Join(homedir, "dotfiles/dotctl/config")) 
   if err != nil {

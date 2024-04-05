@@ -2,7 +2,6 @@ package test
 
 import (
 	"bytes"
-	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -13,33 +12,35 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-
-func TestLinkCommand(t *testing.T) {
-  viper.Set("testing", true)
+func TestStatusCommand(t *testing.T) {
   cmd.FileSystem = afero.NewMemMapFs()
-  fs := cmd.FileSystem
-  homedir := os.Getenv("HOME")
+  viper.Set("testing", true)
 
+  fs := cmd.FileSystem
+
+  homedir := os.Getenv("HOME")
   fs.MkdirAll(filepath.Join(homedir, "dotfiles/dotctl"), 0755)
-  links := map[string]string {
-    "someconfig": filepath.Join(homedir, ".config/someconfig"),
+  fs.MkdirAll(filepath.Join(homedir, "dotfiles/someconfig"), 0755)
+  fs.MkdirAll(filepath.Join(homedir, "dotfiles/somelinkedconfig"), 0755)
+
+  var links = map[string]string {
+    "somelinkedconfig": "configpath",
   }
+  
   viper.Set("links", links)
 
   dotctl := cmd.RootCmd
+
   actual := new(bytes.Buffer)
 
   dotctl.SetOut(actual)
   dotctl.SetErr(actual)
-  dotctl.SetArgs([]string{"link"})
+  dotctl.SetArgs([]string{"status"})
 
   dotctl.Execute()
 
-  someconfig := filepath.Join(homedir, ".config/someconfig/")
-  somedot := filepath.Join(homedir, "dotfiles/someconfig/")
-
-  expected := fmt.Sprintf("%s,%s", someconfig, somedot)
+  expected := "Config directories currently in dotfile path:\n" +
+              "someconfig\nsomelinkedconfig - configpath\n"
 
   assert.Equal(t, expected, actual.String(), "actual differs from expected")
 }
-
