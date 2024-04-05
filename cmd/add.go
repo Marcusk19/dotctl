@@ -8,6 +8,7 @@ import (
 
 	"github.com/Marcusk19/dotctl/tools"
 	"github.com/manifoldco/promptui"
+	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -66,11 +67,36 @@ func runAddCommand(cmd *cobra.Command, args []string) {
     }
     overwrite, _ := confirm.Run()
     if strings.ToUpper(overwrite) == "Y" {
-      err = tools.CopyDir(fs, configSrc, dotfileDest)
-      if err != nil {
-        log.Fatal(err)
-      }
-      fmt.Printf("Copied %s -> %s\n", configSrc, dotfileDest)
+      addConfigToDir(fs, configSrc, dotfileDest)
     }
+  } else {
+    addConfigToDir(fs, configSrc, dotfileDest)
   }
 }
+
+func addConfigToDir(fs afero.Fs, configSrc, dotfileDest string) {
+  configFile, err := fs.Open(configSrc)
+  if err != nil {
+    log.Fatal(err)
+  }
+  
+  defer configFile.Close()
+
+  fileInfo, err := configFile.Stat()
+  if err != nil {
+    log.Fatal(err)
+  }
+
+  if fileInfo.IsDir() {
+    err = tools.CopyDir(fs, configSrc, dotfileDest)
+  } else {
+    err = tools.CopyFile(fs, configSrc, dotfileDest)
+  }
+
+  if err != nil {
+    log.Fatal(err)
+  }
+
+  fmt.Printf("Copied %s -> %s\n", configSrc, dotfileDest)
+}
+
