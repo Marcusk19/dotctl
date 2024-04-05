@@ -41,6 +41,5 @@ func TestLinkCommand(t *testing.T) {
   expected := fmt.Sprintf("%s,%s", someconfig, somedot)
 
   assert.Equal(t, expected, actual.String(), "actual differs from expected")
-
 }
 
