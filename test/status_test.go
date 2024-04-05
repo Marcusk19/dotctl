@@ -7,11 +7,13 @@ import (
 	"testing"
 
 	"github.com/Marcusk19/dotctl/cmd"
+	"github.com/spf13/afero"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestStatusCommand(t *testing.T) {
+  cmd.FileSystem = afero.NewMemMapFs()
   viper.Set("testing", true)
 
   fs := cmd.FileSystem

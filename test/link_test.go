@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/Marcusk19/dotctl/cmd"
+	"github.com/spf13/afero"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
@@ -15,6 +16,7 @@ import (
 
 func TestLinkCommand(t *testing.T) {
   viper.Set("testing", true)
+  cmd.FileSystem = afero.NewMemMapFs()
   fs := cmd.FileSystem
   homedir := os.Getenv("HOME")
 
