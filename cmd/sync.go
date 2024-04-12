@@ -108,6 +108,9 @@ func runSyncCommand(cmd *cobra.Command, args []string) {
   passwordVal, err := password.Run()
   CheckIfError(err)
 
+
+  fmt.Println("Pulling from remote")
+
 	err = w.Pull(&git.PullOptions{
 		RemoteName: "origin",
     Auth: &http.BasicAuth {
@@ -122,41 +125,50 @@ func runSyncCommand(cmd *cobra.Command, args []string) {
     fmt.Fprintf(cmd.OutOrStdout(), "successfully pulled from %s", origin)
   }
 
-  err = gitAddFiles(w, FileSystem)
+  status, err := w.Status()
   if err != nil {
-    log.Fatalf("Could not add files: %s\n", err)
+    log.Fatalln("Error getting status", err)
+  }
+
+  if !status.IsClean() {
+    fmt.Println("Changes detected, committing and pushing...")
+
+    err = gitAddFiles(w, FileSystem)
+    if err != nil {
+      log.Fatalf("Could not add files: %s\n", err)
+    }
+    
+    commitMessage := "backup " + time.Now().String()
+
+    commit, err := w.Commit(commitMessage, &git.CommitOptions{
+      Author: &object.Signature{
+        Name: "dotctl CLI",
+        Email: "example@example.com",
+        When: time.Now(),
+      },
+    })
+
+    if err != nil {
+      log.Fatal(err.Error())
+    }
+
+    obj, err := r.CommitObject(commit)
+
+    if err != nil {
+      log.Fatalf("Cannot commit: %s",err)
+    }
+
+    fmt.Println(obj)
+
+    err = r.Push(&git.PushOptions{
+      RemoteName: "origin",
+      Auth: &http.BasicAuth {
+        Username: usernameVal,
+        Password: passwordVal,
+      },
+    })
+    CheckIfError(err)
   }
   
-  commitMessage := "backup " + time.Now().String()
-
-  commit, err := w.Commit(commitMessage, &git.CommitOptions{
-    Author: &object.Signature{
-      Name: "dotctl CLI",
-      Email: "example@example.com",
-      When: time.Now(),
-    },
-  })
-
-  if err != nil {
-    log.Fatal(err.Error())
-  }
-
-  obj, err := r.CommitObject(commit)
-
-  if err != nil {
-    log.Fatalf("Cannot commit: %s",err)
-  }
-
-  fmt.Println(obj)
-
-  err = r.Push(&git.PushOptions{
-		RemoteName: "origin",
-    Auth: &http.BasicAuth {
-      Username: usernameVal,
-      Password: passwordVal,
-    },
-  })
-  CheckIfError(err)
   viper.WriteConfig()
-
 }
