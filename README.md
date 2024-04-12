@@ -18,8 +18,8 @@ dotctl init
 dotctl add ~/.config/nvim
 # create symlinks
 dotctl link
-# sync changes
-dotctl sync -r <your-git-repo>
+# sync
+dotctl sync -r <remote-repo>
 ```
 
 ## Development
