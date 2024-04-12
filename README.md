@@ -11,9 +11,6 @@ updating them with git.
 
 ## Usage
 
-_Note: at the moment the sync feature has some bugs that need to be fixed, to_
-_avoid breaking your configs it is recommended to manually use git for the time being_
-
 ```bash
 # init sets up the config file and directory to hold all dotfiles
 dotctl init
@@ -21,6 +18,8 @@ dotctl init
 dotctl add ~/.config/nvim
 # create symlinks
 dotctl link
+# sync
+dotctl sync -r <remote-repo>
 ```
 
 ## Development
