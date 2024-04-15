@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"path"
 	"time"
 
 	"github.com/go-git/go-git/v5"
@@ -170,5 +171,20 @@ func runSyncCommand(cmd *cobra.Command, args []string) {
     CheckIfError(err)
   }
   
-  viper.WriteConfig()
+  // a pull deletes the dotctl config from the filesystem, need to recreate it
+  fs := UseFilesystem()
+  err = fs.MkdirAll(path.Join(DotfilePath, "dotctl"), 0755)
+  if err != nil {
+    log.Fatalf("Unable to create dotfile structure: %s", error.Error(err))
+  }
+
+  _, err = fs.Create(path.Join(DotfilePath, "dotctl/config"))
+  if err != nil {
+    panic(fmt.Errorf("Unable to create config file %w", err))
+  }
+
+  err = viper.WriteConfig()
+  if err != nil {
+    fmt.Println("Error: could not write config: ", err)
+  }
 }
