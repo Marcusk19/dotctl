@@ -60,6 +60,14 @@ func runRemoveCommand(cmd *cobra.Command, args []string) {
     fmt.Printf("ERROR: problem copying over dotfile(s) %s\n", err)
     return
   }
+
+  delete(links, dotfile)
+  viper.Set("links", links)
+  err = viper.WriteConfig()
+  if err != nil {
+    fmt.Printf("ERROR: problem saving config: %s\n", err)
+    return
+  }
   
   fmt.Printf("%s symlink removed, copied files over to %s\n", dotfile, dotfileConfigPath)
 }

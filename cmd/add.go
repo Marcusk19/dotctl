@@ -37,16 +37,13 @@ func runAddCommand(cmd *cobra.Command, args []string) {
   configSrc := args[0]
   dirs := strings.Split(configSrc, "/")
   name := dirs[len(dirs) - 1] // take the last section of the path, this should be the name
+  if name[0] == '.' {
+    name = name[1:]
+  }
 
   links := viper.GetStringMap("links")
   links[name] = configSrc
   viper.Set("links", links)
-  if !testing {
-    err := viper.WriteConfig()
-    if err != nil {
-      fmt.Printf("Problem updating dotctl config %s", err)
-    }
-  }
 
   dotfilePath := viper.Get("dotfile-path").(string)
 
@@ -69,8 +66,16 @@ func runAddCommand(cmd *cobra.Command, args []string) {
     if strings.ToUpper(overwrite) == "Y" {
       addConfigToDir(fs, configSrc, dotfileDest)
     }
+    fmt.Printf("Just set up %s to link to %s\n", configSrc, dotfileDest)
   } else {
     addConfigToDir(fs, configSrc, dotfileDest)
+  }
+
+  if !testing {
+    err := viper.WriteConfig()
+    if err != nil {
+      fmt.Printf("Problem updating dotctl config %s", err)
+    }
   }
 }
 
