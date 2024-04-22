@@ -64,7 +64,7 @@ func init() {
   viper.BindEnv("testing")
   viper.SetDefault("testing", false)
 
-  viper.SetConfigName("config")
+  viper.SetConfigName("config.yml")
   viper.SetConfigType("yaml")
   viper.AddConfigPath("./tmp/dotfiles/dotctl")
   viper.AddConfigPath(filepath.Join(DotfilePath, "dotctl"))
