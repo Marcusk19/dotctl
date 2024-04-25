@@ -132,11 +132,24 @@ func runSyncCommand(cmd *cobra.Command, args []string) {
   }
 
   if !status.IsClean() {
-    fmt.Println("Changes detected, committing and pushing...")
+    fmt.Println("Changes detected, do you want to push them?")
+    confirm := promptui.Prompt {
+      Label: "commit and push changes",
+      IsConfirm: true,
+    }
+
+    _, err := confirm.Run()
+    if err != nil {
+      fmt.Println("Will not push changes")
+      return
+    }
+
+    fmt.Println("Pushing changes...")
 
     err = gitAddFiles(w, FileSystem)
     if err != nil {
       log.Fatalf("Could not add files: %s\n", err)
+      return
     }
     
     commitMessage := "backup " + time.Now().String()
@@ -172,8 +185,12 @@ func runSyncCommand(cmd *cobra.Command, args []string) {
   }
   
   // a pull deletes the dotctl config from the filesystem, need to recreate it
+  rewriteConfig()
+}
+
+func rewriteConfig() {
   fs := UseFilesystem()
-  err = fs.MkdirAll(path.Join(DotfilePath, "dotctl"), 0755)
+  err := fs.MkdirAll(path.Join(DotfilePath, "dotctl"), 0755)
   if err != nil {
     log.Fatalf("Unable to create dotfile structure: %s", error.Error(err))
   }
