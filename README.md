@@ -7,7 +7,12 @@ git. It aims to abstract away the manual effort of symlinking your dotfiles to c
 updating them with git.
 
 ## Installation
-- TBD
+_requirements: have go installed_
+
+clone the repo and run script to build binary and copy it to your path
+```bash
+make install
+```
 
 ## Usage
 
