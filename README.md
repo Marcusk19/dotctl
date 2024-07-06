@@ -7,10 +7,16 @@ git. It aims to abstract away the manual effort of symlinking your dotfiles to c
 updating them with git.
 
 ## Installation
-_requirements: have go installed_
+
+### Build From Source
+_Prerequisites_
+- [go](https://go.dev/doc/install)
 
 clone the repo and run script to build binary and copy it to your path
-```bash
+
+```sh
+git clone https://github.com/Marcusk19/dotctl.git
+cd dotcl
 make install
 ```
 
