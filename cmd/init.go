@@ -67,7 +67,7 @@ func runInitCommand(cmd *cobra.Command, args []string) {
     log.Fatalf("Unable to create dotfile structure: %s", error.Error(err))
   }
 
-  _, err = fs.Create(path.Join(DotfilePath, "dotctl/config"))
+  _, err = fs.Create(path.Join(DotfilePath, "dotctl/config.yml"))
   if err != nil {
     panic(fmt.Errorf("Unable to create config file %w", err))
   }
