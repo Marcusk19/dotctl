@@ -45,4 +45,13 @@ make sandbox # creates the directory and copies over from ~/.config
 make clean # removes directory
 ```
 
+### Docker
+You can also run the docker container that will set up a barebones shell for you
+to test dotctl with 
+
+```sh
+docker built -d dotctl-dev .
+docker run -it dotctl-dev
+dotctl status
+```
 
