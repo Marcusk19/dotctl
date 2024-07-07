@@ -27,7 +27,7 @@ func TestInitCommand(t *testing.T) {
 
   homedir := os.Getenv("HOME")
 
-  _, err := afero.ReadFile(fs, filepath.Join(homedir, "dotfiles/dotctl/config")) 
+  _, err := afero.ReadFile(fs, filepath.Join(homedir, "dotfiles/dotctl/config.yml")) 
   if err != nil {
     t.Error(err.Error())
   }
