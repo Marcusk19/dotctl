@@ -32,17 +32,35 @@ func runStatusCommand(cmd *cobra.Command, args[]string) {
     log.Fatalf("Cannot read dotfile dir: %s\n", err)
   }
 
-  fmt.Fprintln(cmd.OutOrStdout(), "Config directories currently in dotfile path:")
+  var linkedConfigs []string
+  var orphanedConfigs []string
+
+  fmt.Fprintln(cmd.OutOrStdout(), "Config directories currently in dotfile path:\n")
   for _, dotfileDir := range(dotfiles) {
     dirName := dotfileDir.Name()
     if !slices.Contains(ignoredDirs, dirName) {
       if links[dirName] != "" {
-        fmt.Fprintf(cmd.OutOrStdout(), "%s - %s\n", dirName, links[dirName]) 
+        // fmt.Fprintf(cmd.OutOrStdout(), "%s -> %s\n", dirName, links[dirName]) 
+        linkedConfigs = append(linkedConfigs, dirName, links[dirName])
       } else {
-        fmt.Fprintln(cmd.OutOrStdout(), dirName)
+        // fmt.Fprintln(cmd.OutOrStdout(), dirName)
+        orphanedConfigs = append(orphanedConfigs, dirName)
       }
     }
   }
+
+  for i := 0; i < len(linkedConfigs); i += 2 {
+    fmt.Fprintf(cmd.OutOrStdout(), "%s (links to %s)\n", linkedConfigs[i], linkedConfigs[i+1])
+  }
+  fmt.Fprintln(cmd.OutOrStdout(), "================")
+  
+  fmt.Fprintln(cmd.OutOrStdout(), "Orphaned configs")
+
+  for _, conf := range(orphanedConfigs) {
+    fmt.Fprintln(cmd.OutOrStdout(), conf)
+  }
+
+
     
 }
 
