@@ -13,33 +13,31 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-
 func TestLinkCommand(t *testing.T) {
-  viper.Set("testing", true)
-  cmd.FileSystem = afero.NewMemMapFs()
-  fs := cmd.FileSystem
-  homedir := os.Getenv("HOME")
+	viper.Set("testing", true)
+	cmd.FileSystem = afero.NewMemMapFs()
+	fs := cmd.FileSystem
+	homedir := os.Getenv("HOME")
 
-  fs.MkdirAll(filepath.Join(homedir, "dotfiles/dotctl"), 0755)
-  links := map[string]string {
-    "someconfig": filepath.Join(homedir, ".config/someconfig"),
-  }
-  viper.Set("links", links)
+	fs.MkdirAll(filepath.Join(homedir, "dotfiles/dotctl"), 0755)
+	links := map[string]string{
+		"someconfig": filepath.Join(homedir, ".config/someconfig"),
+	}
+	viper.Set("links", links)
 
-  dotctl := cmd.RootCmd
-  actual := new(bytes.Buffer)
+	dotctl := cmd.RootCmd
+	actual := new(bytes.Buffer)
 
-  dotctl.SetOut(actual)
-  dotctl.SetErr(actual)
-  dotctl.SetArgs([]string{"link"})
+	dotctl.SetOut(actual)
+	dotctl.SetErr(actual)
+	dotctl.SetArgs([]string{"link"})
 
-  dotctl.Execute()
+	dotctl.Execute()
 
-  someconfig := filepath.Join(homedir, ".config/someconfig/")
-  somedot := filepath.Join(homedir, "dotfiles/someconfig/")
+	someconfig := filepath.Join(homedir, ".config/someconfig/")
+	somedot := filepath.Join(homedir, "dotfiles/someconfig/")
 
-  expected := fmt.Sprintf("%s,%s", someconfig, somedot)
+	expected := fmt.Sprintf("%s,%s", someconfig, somedot)
 
-  assert.Equal(t, expected, actual.String(), "actual differs from expected")
+	assert.Equal(t, expected, actual.String(), "actual differs from expected")
 }
-

@@ -12,24 +12,24 @@ import (
 )
 
 func TestInitCommand(t *testing.T) {
-  viper.Set("testing", true)
+	viper.Set("testing", true)
 
-  fs := cmd.FileSystem
+	fs := cmd.FileSystem
 
-  dotctl := cmd.RootCmd
-  actual := new(bytes.Buffer)
+	dotctl := cmd.RootCmd
+	actual := new(bytes.Buffer)
 
-  dotctl.SetOut(actual)
-  dotctl.SetErr(actual)
-  dotctl.SetArgs([]string{"init"})
-  
-  dotctl.Execute()
+	dotctl.SetOut(actual)
+	dotctl.SetErr(actual)
+	dotctl.SetArgs([]string{"init"})
 
-  homedir := os.Getenv("HOME")
+	dotctl.Execute()
 
-  _, err := afero.ReadFile(fs, filepath.Join(homedir, "dotfiles/dotctl/config.yml")) 
-  if err != nil {
-    t.Error(err.Error())
-  }
-  
+	homedir := os.Getenv("HOME")
+
+	_, err := afero.ReadFile(fs, filepath.Join(homedir, "dotfiles/dotctl/config.yml"))
+	if err != nil {
+		t.Error(err.Error())
+	}
+
 }

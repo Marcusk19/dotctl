@@ -13,7 +13,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-
 var RootCmd = &cobra.Command{
 	Use:   "dotctl",
 	Short: "dotfile management",
@@ -38,63 +37,60 @@ var DryRun bool
 var FileSystem afero.Fs
 
 func init() {
-  // define flags and config sections
-
+	// define flags and config sections
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-  defaultDotPath := os.Getenv("HOME") + "/dotfiles/"
-  defaultConfPath := os.Getenv("HOME") + "/.config/"
-  RootCmd.PersistentFlags().StringVar(
-    &DotfilePath,
-    "dotfile-path",
-    defaultDotPath,
-    "Path pointing to dotfiles directory",
-  )
-  RootCmd.PersistentFlags().StringVar(
-    &ConfigPath,
-    "config-path",
-    defaultConfPath,
-    "Path pointing to config directory",
-  )
-  RootCmd.PersistentFlags().BoolVarP(&DryRun, "dry-run", "d", false, "Only output which symlinks will be created")
-  viper.BindPFlag("dotfile-path", RootCmd.PersistentFlags().Lookup("dotfile-path"))
-  viper.BindPFlag("config-path", RootCmd.PersistentFlags().Lookup("config-path"))
+	defaultDotPath := os.Getenv("HOME") + "/dotfiles/"
+	defaultConfPath := os.Getenv("HOME") + "/.config/"
+	RootCmd.PersistentFlags().StringVar(
+		&DotfilePath,
+		"dotfile-path",
+		defaultDotPath,
+		"Path pointing to dotfiles directory",
+	)
+	RootCmd.PersistentFlags().StringVar(
+		&ConfigPath,
+		"config-path",
+		defaultConfPath,
+		"Path pointing to config directory",
+	)
+	RootCmd.PersistentFlags().BoolVarP(&DryRun, "dry-run", "d", false, "Only output which symlinks will be created")
+	viper.BindPFlag("dotfile-path", RootCmd.PersistentFlags().Lookup("dotfile-path"))
+	viper.BindPFlag("config-path", RootCmd.PersistentFlags().Lookup("config-path"))
 
-  viper.BindEnv("testing")
-  viper.SetDefault("testing", false)
+	viper.BindEnv("testing")
+	viper.SetDefault("testing", false)
 
-  viper.SetConfigName("config.yml")
-  viper.SetConfigType("yaml")
-  viper.AddConfigPath("./tmp/dotfiles/dotctl")
-  viper.AddConfigPath(filepath.Join(DotfilePath, "dotctl"))
+	viper.SetConfigName("config.yml")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath("./tmp/dotfiles/dotctl")
+	viper.AddConfigPath(filepath.Join(DotfilePath, "dotctl"))
 
-  viper.SetDefault("links", map[string]string{})
+	viper.SetDefault("links", map[string]string{})
 
-  err := viper.ReadInConfig()
+	err := viper.ReadInConfig()
 
-  if err != nil {
-    fmt.Println("No config detected. You can generate one by using 'dotctl init'")
-  }
+	if err != nil {
+		fmt.Println("No config detected. You can generate one by using 'dotctl init'")
+	}
 
-  FileSystem = UseFilesystem()
+	FileSystem = UseFilesystem()
 
 }
 
 func UseFilesystem() afero.Fs {
-  testing := viper.Get("testing")
-  if(testing == "true") {
-    return afero.NewMemMapFs()
-  } else {
-    return afero.NewOsFs()
-  }
+	testing := viper.Get("testing")
+	if testing == "true" {
+		return afero.NewMemMapFs()
+	} else {
+		return afero.NewOsFs()
+	}
 }
 
 func CheckIfError(err error) {
-  if err != nil {
-    panic(err)
-  }
-  return
+	if err != nil {
+		panic(err)
+	}
+	return
 }
-
-
