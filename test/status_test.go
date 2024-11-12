@@ -12,34 +12,34 @@ import (
 )
 
 func TestStatusCommand(t *testing.T) {
-  cmd.FileSystem = afero.NewMemMapFs()
-  viper.Set("testing", true)
+	cmd.FileSystem = afero.NewMemMapFs()
+	viper.Set("testing", true)
 
-  fs := cmd.FileSystem
+	fs := cmd.FileSystem
 
-  homedir := os.Getenv("HOME")
-  fs.MkdirAll(filepath.Join(homedir, "dotfiles/dotctl"), 0755)
-  fs.MkdirAll(filepath.Join(homedir, "dotfiles/someconfig"), 0755)
-  fs.MkdirAll(filepath.Join(homedir, "dotfiles/somelinkedconfig"), 0755)
+	homedir := os.Getenv("HOME")
+	fs.MkdirAll(filepath.Join(homedir, "dotfiles/dotctl"), 0755)
+	fs.MkdirAll(filepath.Join(homedir, "dotfiles/someconfig"), 0755)
+	fs.MkdirAll(filepath.Join(homedir, "dotfiles/somelinkedconfig"), 0755)
 
-  var links = map[string]string {
-    "somelinkedconfig": "configpath",
-  }
-  
-  viper.Set("links", links)
+	var links = map[string]string{
+		"somelinkedconfig": "configpath",
+	}
 
-  dotctl := cmd.RootCmd
+	viper.Set("links", links)
 
-  actual := new(bytes.Buffer)
+	dotctl := cmd.RootCmd
 
-  dotctl.SetOut(actual)
-  dotctl.SetErr(actual)
-  dotctl.SetArgs([]string{"status"})
+	actual := new(bytes.Buffer)
 
-  dotctl.Execute()
+	dotctl.SetOut(actual)
+	dotctl.SetErr(actual)
+	dotctl.SetArgs([]string{"status"})
 
-  // expected := "Config directories currently in dotfile path:\n" +
-              // "someconfig\nsomelinkedconfig - configpath\n"
+	dotctl.Execute()
 
-  // assert.Equal(t, expected, actual.String(), "actual differs from expected")
+	// expected := "Config directories currently in dotfile path:\n" +
+	// "someconfig\nsomelinkedconfig - configpath\n"
+
+	// assert.Equal(t, expected, actual.String(), "actual differs from expected")
 }

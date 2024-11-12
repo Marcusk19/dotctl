@@ -11,76 +11,72 @@ import (
 )
 
 func init() {
-  RootCmd.AddCommand(linkCommand)
-  linkCommand.AddCommand(listCommand)
+	RootCmd.AddCommand(linkCommand)
+	linkCommand.AddCommand(listCommand)
 }
 
-
-var linkCommand = &cobra.Command {
-  Use: "link",
-  Run: runLinkCommand,
-  Short: "generate symlinks according to config",
-  Long: "add longer description", // TODO add longer description here
+var linkCommand = &cobra.Command{
+	Use:   "link",
+	Run:   runLinkCommand,
+	Short: "generate symlinks according to config",
+	Long:  "add longer description", // TODO add longer description here
 }
-
 
 func runLinkCommand(cmd *cobra.Command, args []string) {
-  fs := FileSystem
-  fmt.Println("Symlinking dotfiles...")
-  dotfileRoot := viper.Get("dotfile-path").(string)
+	fs := FileSystem
+	fmt.Println("Symlinking dotfiles...")
+	dotfileRoot := viper.Get("dotfile-path").(string)
 
-  links := viper.GetStringMapString("links")
+	links := viper.GetStringMapString("links")
 
-  for configName, configPath := range links {
-    if configName == ".git"  || configName == "dotctl" {
-      continue
-    }
-    dotPath := filepath.Join(dotfileRoot, configName)
+	for configName, configPath := range links {
+		if configName == ".git" || configName == "dotctl" {
+			continue
+		}
+		dotPath := filepath.Join(dotfileRoot, configName)
 
-    if configPath == ""{
-      fmt.Fprintf(cmd.OutOrStdout(), "Warning: could not find config for %s\n", configName)
-    }
+		if configPath == "" {
+			fmt.Fprintf(cmd.OutOrStdout(), "Warning: could not find config for %s\n", configName)
+		}
 
+		// destination needs to be removed before symlink
+		if DryRun {
+			log.Printf("Existing directory %s will be removed\n", configPath)
 
-    // destination needs to be removed before symlink
-    if(DryRun) {
-      log.Printf("Existing directory %s will be removed\n", configPath)
+		} else {
+			fs.RemoveAll(configPath)
+		}
 
-    } else {
-      fs.RemoveAll(configPath)
-    }
+		testing := viper.Get("testing")
 
-    testing := viper.Get("testing")
-
-    if(DryRun) {
-      log.Printf("Will link %s -> %s\n", configPath, dotPath)
-    } else {
-      if(testing == true) {
-        fmt.Fprintf(cmd.OutOrStdout(), "%s,%s", configPath, dotPath)
-      } else {
-        err := afero.OsFs.SymlinkIfPossible(afero.OsFs{}, dotPath, configPath)
-        if err != nil {
-          log.Fatalf("Cannot symlink %s: %s\n", configName, err.Error())
-        } else {
-          fmt.Printf("%s linked\n", configName)
-        }
-      }
-    }
-  }
+		if DryRun {
+			log.Printf("Will link %s -> %s\n", configPath, dotPath)
+		} else {
+			if testing == true {
+				fmt.Fprintf(cmd.OutOrStdout(), "%s,%s", configPath, dotPath)
+			} else {
+				err := afero.OsFs.SymlinkIfPossible(afero.OsFs{}, dotPath, configPath)
+				if err != nil {
+					log.Fatalf("Cannot symlink %s: %s\n", configName, err.Error())
+				} else {
+					fmt.Printf("%s linked\n", configName)
+				}
+			}
+		}
+	}
 }
 
-
-var listCommand = &cobra.Command {
-  Use: "list",
-  Run: runListCommand,
-  Short: "list configs that should be symlinked",
-  Long: "add longer description", // TODO add longer description here
+var listCommand = &cobra.Command{
+	Use:   "list",
+	Run:   runListCommand,
+	Short: "list configs that should be symlinked",
+	Long:  "add longer description", // TODO add longer description here
 }
 
 func runListCommand(cmd *cobra.Command, args []string) {
-  links := viper.GetStringMapString("links")
-  fmt.Println("Configs added:")
-  for configName, configPath := range links {
-    fmt.Printf("%s: %s\n", configName, configPath)
-  }
+	links := viper.GetStringMapString("links")
+	fmt.Println("Configs added:")
+	for configName, configPath := range links {
+		fmt.Printf("%s: %s\n", configName, configPath)
+	}
 }

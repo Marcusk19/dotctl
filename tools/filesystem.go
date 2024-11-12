@@ -8,9 +8,8 @@ import (
 
 var AppFs afero.Fs = afero.NewOsFs()
 
-
 func SetTestFs() {
-  log.Println("setting test fs")
-  testFs := afero.NewMemMapFs()
-  AppFs = testFs
+	log.Println("setting test fs")
+	testFs := afero.NewMemMapFs()
+	AppFs = testFs
 }
