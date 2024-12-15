@@ -12,14 +12,13 @@ import (
 
 func init() {
 	RootCmd.AddCommand(linkCommand)
-	linkCommand.AddCommand(listCommand)
 }
 
 var linkCommand = &cobra.Command{
 	Use:   "link",
 	Run:   runLinkCommand,
 	Short: "generate symlinks according to config",
-	Long:  "add longer description", // TODO add longer description here
+	Long:  "runs through all configs in the dotctl config file and links them to configured symlinks", // TODO add longer description here
 }
 
 func runLinkCommand(cmd *cobra.Command, args []string) {
@@ -55,28 +54,17 @@ func runLinkCommand(cmd *cobra.Command, args []string) {
 			if testing == true {
 				fmt.Fprintf(cmd.OutOrStdout(), "%s,%s", configPath, dotPath)
 			} else {
-				err := afero.OsFs.SymlinkIfPossible(afero.OsFs{}, dotPath, configPath)
-				if err != nil {
-					log.Fatalf("Cannot symlink %s: %s\n", configName, err.Error())
-				} else {
-					fmt.Printf("%s linked\n", configName)
-				}
+				linkPaths(dotPath, configPath)
 			}
 		}
 	}
 }
 
-var listCommand = &cobra.Command{
-	Use:   "list",
-	Run:   runListCommand,
-	Short: "list configs that should be symlinked",
-	Long:  "add longer description", // TODO add longer description here
-}
-
-func runListCommand(cmd *cobra.Command, args []string) {
-	links := viper.GetStringMapString("links")
-	fmt.Println("Configs added:")
-	for configName, configPath := range links {
-		fmt.Printf("%s: %s\n", configName, configPath)
+func linkPaths(dotPath, configPath string) {
+	err := afero.OsFs.SymlinkIfPossible(afero.OsFs{}, dotPath, configPath)
+	if err != nil {
+		log.Fatalf("Cannot symlink %s: %s\n", configPath, err.Error())
+	} else {
+		fmt.Printf("%s linked to %s\n", configPath, dotPath)
 	}
 }
