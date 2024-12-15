@@ -1,10 +1,11 @@
 # Dotctl
 
-A cli tool to manage your dotfiles
+dotfile management
 ## About
 Dotctl is a tool to help you easily manage your dotfiles and sync them across separate machines using
-git. It aims to abstract away the manual effort of symlinking your dotfiles to config directories and
-updating them with git.
+git. It creates a `dotfiles` subdirectory in the user's `$HOME` and provides simple commands to add
+and symlink config files/directories to the central `dotfiles` directory.
+
 
 ## Installation
 
@@ -16,7 +17,7 @@ clone the repo and run script to build binary and copy it to your path
 
 ```sh
 git clone https://github.com/Marcusk19/dotctl.git
-cd dotcl
+cd dotctl
 make install
 ```
 
@@ -29,29 +30,19 @@ dotctl init
 dotctl add ~/.config/nvim
 # create symlinks
 dotctl link
-# sync
-dotctl sync -r <remote-repo>
 ```
+### Syncing to git
+_Warning: using the sync command can have some unexpected behavior, currently the recommendation
+is to manually track the dotfiles with git_
 
-## Development
-It's preferable to create a temporary directory and copy your system's config
-directory over to avoid making undesirable changes to your system.
-A couple of useful makefile scripts exist to set up and tear down this.
-It will create a testing directory in `./tmp/config` and copy your system configs
-over.
+dotctl comes with a `sync` command that performs the following operations for the dotfiles directory:
 
-```bash
-make sandbox # creates the directory and copies over from ~/.config
-make clean # removes directory
+1. pulls changes from configured upstream git repo 
+2. commits and pushes any changes detected in the dotfile repo
+
+set the upstream repo using the `-r` flag or manually edit the config at `$HOME/dotfiles/dotctl/config.yaml`
+
+example usage:
 ```
-
-### Docker
-You can also run the docker container that will set up a barebones shell for you
-to test dotctl with 
-
-```sh
-docker built -d dotctl-dev .
-docker run -it dotctl-dev
-dotctl status
+dotctl sync -r https://github.com/example/dotfiles.git
 ```
-
