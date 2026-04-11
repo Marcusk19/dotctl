@@ -33,6 +33,8 @@ func Execute() {
 var DotfilePath string
 var ConfigPath string
 var DryRun bool
+var Overwrite bool
+var NoBackup bool
 
 var FileSystem afero.Fs
 
@@ -56,6 +58,8 @@ func init() {
 		"Path pointing to config directory",
 	)
 	RootCmd.PersistentFlags().BoolVarP(&DryRun, "dry-run", "d", false, "Only output which symlinks will be created")
+	RootCmd.PersistentFlags().BoolVar(&Overwrite, "overwrite", false, "Overwrite existing files instead of backing up")
+	RootCmd.PersistentFlags().BoolVar(&NoBackup, "no-backup", false, "Skip backups, skip conflicts instead")
 	viper.BindPFlag("dotfile-path", RootCmd.PersistentFlags().Lookup("dotfile-path"))
 	viper.BindPFlag("config-path", RootCmd.PersistentFlags().Lookup("config-path"))
 

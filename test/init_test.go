@@ -13,6 +13,7 @@ import (
 
 func TestInitCommand(t *testing.T) {
 	viper.Set("testing", true)
+	cmd.FileSystem = afero.NewMemMapFs()
 
 	fs := cmd.FileSystem
 
