@@ -83,7 +83,10 @@ func runAddCommand(cmd *cobra.Command, args []string) {
 	if !DryRun {
 		// symlink the copied dotfile destination back to the config src
 		fs.RemoveAll(configSrc)
-		linkPaths(dotfileDest, configSrc)
+		if err := os.Symlink(dotfileDest, configSrc); err != nil {
+			log.Fatalf("Cannot symlink %s → %s: %v\n", configSrc, dotfileDest, err)
+		}
+		fmt.Printf("%s linked to %s\n", configSrc, dotfileDest)
 	} else {
 		fmt.Println("Files were not symlinked")
 	}

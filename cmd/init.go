@@ -82,15 +82,13 @@ func runInitCommand(cmd *cobra.Command, args []string) {
 			log.Fatal(err)
 		}
 
-		gitignoreContent := []byte(`
-      # ignore dotctl config for individual installations
-      dotctl/
+		gitignoreContent := []byte(`# dotctl config (config.yml) should be committed so dotctl apply works on fresh machines
 
-      .DS_Store
-      *.swp
-      *.bak
-      *.tmp
-    `)
+.DS_Store
+*.swp
+*.bak
+*.tmp
+`)
 
 		err := afero.WriteFile(fs, filepath.Join(DotfilePath, ".gitignore"), gitignoreContent, 0644)
 
