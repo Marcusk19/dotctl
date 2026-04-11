@@ -40,7 +40,20 @@ archives:
 
 changelog:
   sort: asc
+  use: github
+  groups:
+    - title: 'New Features'
+      regexp: '^.*feat(\(.+\))??!?:.+$'
+      order: 0
+    - title: 'Bug Fixes'
+      regexp: '^.*fix(\(.+\))??!?:.+$'
+      order: 1
+    - title: 'Other Changes'
+      order: 999
   filters:
     exclude:
       - "^docs:"
       - "^test:"
+      - "^chore:"
+      - "Merge pull request"
+      - "Merge branch"
