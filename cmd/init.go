@@ -82,7 +82,7 @@ func runInitCommand(cmd *cobra.Command, args []string) {
 			log.Fatal(err)
 		}
 
-		gitignoreContent := []byte(`# dotctl config (config.yml) should be committed so dotctl apply works on fresh machines
+		gitignoreContent := []byte(`# dotctl config (config.yml) should be committed so dotctl bootstrap works on fresh machines
 
 .DS_Store
 *.swp

@@ -77,9 +77,9 @@ if [ "$INSTALL_DIR" = "$HOME/.local/bin" ]; then
   fi
 fi
 
-# Run apply if a repo URL was provided
+# Run bootstrap if a repo URL was provided
 if [ -n "${1:-}" ]; then
   echo ""
-  echo "Running: dotctl apply $1"
-  "$INSTALL_DIR/$BINARY" apply "$1"
+  echo "Running: dotctl bootstrap $1"
+  "$INSTALL_DIR/$BINARY" bootstrap "$1"
 fi
